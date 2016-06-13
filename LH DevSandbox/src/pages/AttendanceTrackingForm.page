@@ -1,0 +1,265 @@
+<apex:page title="Attendance Tracking Form" controller="AttendanceTrackingFormController" sidebar="false" showHeader="true">
+    <apex:includeScript value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/jquery-1.11.3.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/jquery.fix.clone.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/jquery-ui-1.11.4/jquery-ui.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/select2-4.0.1/select2.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/jquery-ui-1.11.4/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.AttendanceTrackingFormResources, '/select2-4.0.1/select2.css')}"/>
+
+    <script>
+        var pageData = {};
+        pageData.classParticipants = [
+        <apex:repeat value="{!classParticipants}" var="participant">
+            {id: '{!participant.id}', value: '{!JSENCODE(participant.name)}'},
+        </apex:repeat>
+        ];
+    
+        pageData.programParticipants = [
+        <apex:repeat value="{!programParticipants}" var="participant">
+            {id: '{!participant.id}', value: '{!JSENCODE(participant.name)}'},
+        </apex:repeat>
+        ];
+    
+        pageData.serviceProviders = [
+        <apex:repeat value="{!serviceProviders}" var="providerUser">
+            {id: '{!providerUser.id}', value: '{!JSENCODE(providerUser.name)}'},
+        </apex:repeat>
+        ];
+    
+        pageData.authorizations = {
+        <apex:repeat value="{!authorizationsMap}" var="authKey">
+            {!authKey}:[
+            <apex:repeat value="{!authorizationsMap[authKey]}" var="auth">
+            {id: '{!auth.id}', value: '{!JSENCODE(auth.name)}'},
+            </apex:repeat>
+            ],
+        </apex:repeat>
+        };
+    
+        pageData.workshopDetailPageUrl = '{!workshopDetailPageUrl}';
+    </script>
+    
+    
+    <apex:includeScript value="{!$Resource.AttendanceTrackingForm_Js}" loadOnReady="true"/>
+    
+    <style>
+div {margin-top: 5px; margin-bottom: 10px}
+#errorPanel {color: red;}
+    
+table#dropdownSection tr td.dropdown {
+    width: 100%;
+    margin: auto;
+}
+
+table#dropdownSection tr td.dropdown select {
+    margin-left: 10px;
+}
+
+table#dropdownSection tr td.label {
+  display: inline-block;
+  width: 140px;
+  text-align: right;
+}
+
+table#uosTable {
+    border-collapse:collapse;
+    border:1px solid gray;
+}
+
+table#uosTable td{
+    border:1px solid gray;
+    vertical-align: middle;
+}        
+
+table#uosTable th{
+    text-align: center;
+}        
+        
+table#uosTable th{
+    border:1px solid gray;
+}        
+
+table#uosTable tr.tr-sample{
+    border:4px double gray;
+    background-color: lightgrey;
+}          
+
+table#uosTable tr.tr-existing{
+    background-color: lightgreen;
+}          
+
+table#uosTable tr.tr-new{
+    background-color: lightblue;
+}
+
+table#uosTable label{
+        position:absolute;
+        left:-10000px;
+        top:auto;
+        width:1px;
+        height:1px;
+        overflow:hidden;
+}
+
+    </style>
+    
+    <apex:form >
+    
+    <apex:actionFunction name="loadClassComponents" action="{!loadClassComponents}" rerender="classComponents" status="myStatus"/>
+    <table id="dropdownSection">
+        <tr>
+            <td class="label">
+                <label for="workshopDropdown">Workshop: </label>
+            </td>
+            <td class="dropdown">
+                    <apex:selectList html-name="workshopDropdown" styleClass="workshop" value="{!workshopId}" size="1">
+                        <apex:selectOptions value="{!workshopList}"></apex:selectOptions>
+                        <apex:actionSupport action="{!updateClassComponentsList}" event="onchange" />
+                    </apex:selectList>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label for="classComponentDropDown">Class Component: </label>
+            </td>
+            <td class="dropdown">
+                    <apex:selectList html-name="classComponentDropDown" styleClass="classComponent" id="classComponents" value="{!classId}" size="1" disabled="{!ISNULL(workshopId)}">
+                        <apex:selectOptions value="{!componentsList}"></apex:selectOptions>
+                        <apex:actionSupport action="{!populatePageForSelectedClassComponent}" event="onchange" status="uosLoadStatus" />
+                    </apex:selectList>
+            </td>
+        </tr>
+    </table> 
+        
+    <apex:outputPanel layout="block" rendered="{!NOT(ISNULL(classId))}">
+    <apex:actionStatus id="uosLoadStatus" startText="Loading..." stopText="" />
+        
+        <div id="progressbar"><p>Loading..</p></div>
+        <div id="errorPanel">
+            
+        </div>
+        <div id="participantChooserDiv">
+            <label for="newParticipant">Participant</label>
+            <input name="newParticipant" id="newParticipant" class="text ui-widget-content" />
+        </div>
+        <div id="deleteConfirmDiv" title="Delete">
+            <p>This unit of service will be permanently deleted. Are you sure?</p>
+        </div>        
+        <div id="cancelConfirmDiv" title="Cancel">
+            <p>Changes you made will be discarded. Are you sure?</p>
+        </div>        
+        
+   <apex:pageBlock title="Edit Units of Service" id="uosBlock">
+      <apex:pageBlockButtons >
+          <input type="button" value="Add Row" onclick="TrackerForm.participantChooserDialog.open({sourceType: 'CloneSampleRecord'});" />
+          <input type="button" value="Save" onclick="TrackerForm.saveUos();" />
+          <input type="button" value="Cancel" onclick="TrackerForm.cancel();" />
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection id="uosList" columns="1" title="Units of Service" collapsible="false">
+        <apex:outputLabel value="No units of service for this class. Click add button below" rendered="{!NOT(hasUos)}"/>
+        
+        <apex:outputPanel rendered="{!hasUos}">
+<table border="0" id="uosTable">          
+<tr data-type="Header">
+    <th>Row type</th>
+    <th>Actions</th>
+    <th>Participant</th>
+    <th>Additional people</th>
+    <th>Cancelation Reason</th>
+    <th>Service Provider</th>
+    <th>Service Date</th>
+    <th>Service Time</th>
+    <th>Billable Units</th>    
+    <th>Type of Units</th>    
+    <th>Payment Source</th>    
+    <th>Authorization</th>    
+    <th>Notes</th>  
+</tr>
+<apex:repeat value="{!uosList}" var="uos">
+<tr data-id="{!uos.uosId}" data-type="{!uos.rowType}" class="{!uos.rowTypeClass}">
+<td class="td-rowType" title="Row Type">{!uos.rowType}</td>
+<td class="td-action" title="Action">
+    <apex:outputPanel layout="none" rendered="{!uos.sample}">
+        <a href="#" class="copyAction" onclick="TrackerForm.copyToBlankRows(this);return false;">Apply to new rows</a>
+        <a href="#" class="copyAction" onclick="TrackerForm.copyToAllRows(this);return false;">Apply to all rows</a>
+    </apex:outputPanel>
+    <a href="#" class="deleteAction" onclick="TrackerForm.deleteUos(this);return false;">Delete Row</a>
+    &nbsp;
+    <a href="#" class="cloneAction" onclick="TrackerForm.cloneUos(this);return false;">Clone Row</a>
+</td>
+<td title="Participant" class="td-participant" data-participant="{!uos.participantId}">{!uos.participantName}</td>    
+<td title="Number of additional people" class="td-numberOfAdditionalPeople">
+    <label for="additionalPeopleInput">Number of additional people</label>
+    <input id="additionalPeopleInput" type="text" value="{!uos.numberOfAdditionalPeople}" />
+</td>    
+<td class="td-cancelReason">
+    <label for="cancelReasonInput">Cancellation Reason</label>
+    <select id="cancelReasonInput" data-value="{!uos.cancelReason}">
+       <option value=""></option> 
+       <apex:repeat value="{!cancelReasonPicklistOptions}" var="cancelReasonValue">
+       <option value="{!cancelReasonValue}">{!cancelReasonValue}</option> 
+       </apex:repeat>
+    </select>
+</td>
+<td class="td-serviceProvider">
+    <label for="serviceProviderInput">Service Provider</label>
+    <select id="serviceProviderInput" data-value="{!uos.serviceProviderId}">
+       <option value=""></option> 
+       <apex:repeat value="{!serviceProviders}" var="provider">
+       <option value="{!provider.Id}">{!provider.Name}</option> 
+       </apex:repeat>
+    </select>
+</td>
+        
+<td class="td-serviceDate">
+    <label for="serviceDateInput">Service Date</label>
+    <input id="serviceDateInput" type="text" class="date" value="{!uos.serviceDate}" /> 
+</td>    
+<td class="td-serviceTime">
+    <label for="serviceTimeInput">Service Time</label>
+    <input id="serviceTimeInput" type="text" value="{!uos.serviceTime}" /> 
+</td>    
+<td class="td-billableUnits">
+    <label for="billableUnitsInput">Billable Units</label>
+    <input id="billableUnitsInput" type="text" value="{!uos.billableUnits}" />
+</td>    
+<td class="td-typeOfUnits">
+    <label for="typeOfUnitsInput">Type of Units</label>
+    <select id="typeOfUnitsInput" data-value="{!uos.typeOfUnits}">
+       <option value=""></option> 
+       <apex:repeat value="{!typeOfUnitsPicklistOptions}" var="typeOfUnitsValue">
+       <option value="{!typeOfUnitsValue}">{!typeOfUnitsValue}</option> 
+       </apex:repeat>
+    </select>
+</td>    
+<td class="td-paymentSource">
+    <label for="paymentSourceInput">Payment Source</label>
+    <select id="paymentSourceInput" data-value="{!uos.paymentSourceId}">
+       <option value=""></option> 
+       <apex:repeat value="{!paymentSources}" var="paymentSource">
+       <option value="{!paymentSource.id}">{!paymentSource.name}</option> 
+       </apex:repeat>
+    </select>
+</td>
+<td class="td-authorization">
+    <label for="authorizationInput">Authorization</label>
+    <select id="authorizationInput" data-value="{!uos.authorizationId}">
+       <option value=""></option> 
+    </select>
+</td>
+<td class="td-progressLessonNotes">
+    <label for="progressLessonNotesInput">Progress Lesson Notes</label>
+    <textarea id="progressLessonNotesInput" rows="4" cols="50">{!uos.progressLessonNotes}</textarea> 
+</td> 
+
+    
+        </tr>
+    </apex:repeat>
+            </table>
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

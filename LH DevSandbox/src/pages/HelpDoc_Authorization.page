@@ -1,0 +1,83 @@
+<apex:page showheader="false" sidebar="false" >
+  <!-- Help documentation for Authorization page -->
+  <apex:pageBlock title="Authorizations">
+  
+        <style>
+            body .bPageBlock .pbBody .black .pbSubheader{
+                background-color:#000000;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader{
+                background-color:#c0c0c0;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader h3{
+                color:#000;
+            }
+        </style>
+        
+
+
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Purpose and Description" id="section1">
+                <h1>Purpose:</h1> Authorizations track official forms from external agencies like DOR and VA that authorize services.  These records can also be used internally to approve services billed to a specific payment source.<br/><br/>
+
+
+            
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Important Notes" id="section0">
+            
+                <h1>Creating new authorizations:</h1> New Authorizations can only be created by staff with the appropriate permissions.
+                To create a new authorization record, go to the student's <b>Participation</b> record for the appropriate program and in the Authorization
+                section, click the 'New Authorization' button.
+                <br/><br/>
+                The <b>ONLY</b> time you should use the New button in the Authorizations tab is if the student does <b>not</b> have a Participation record.<br/><br/>
+                
+                <h1>Routing of authorizations:</h1> Authorizations are automatically routed and assigned to staff (an Owner and Owner backup) based on Status and
+                Location. (See below for more information about Status.)
+                <br/><br/>
+                <b>- Pending Profile:</b> For new students not yet in the system or those with incomplete Profiles, the Dept (Rehab) or Program point person will be
+                assigned to the authorization as the new Owner; the Dept or Program backup is assigned as the Owner backup.
+                <br/><br/>
+                <b>- Pending Program:</b> Authorizations for existing LH students new to the particular program are assigned to the Program point person and Program backup.
+                <br/><br/>
+                <b>- Processed:</b> Authorizations for continuing students (active Participation in program) are assigned to the Owner of the program Participation
+                record. The backup is the main program point person.
+                
+                <br/>
+                <br/>
+                
+                Auto-alerts are sent via email to these staff when new authorizations are created.  Assignments are as follows:
+                
+                <br/><br/>
+                <h1>Service Reporting and Billing:</h1> Service Reporting records must be associated with a specific Authorization record.
+                
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Fields" id="section2">
+            
+                <h1>Status:</h1> 
+                <br/>- <b>Processed:</b> Authorization is linked to a Participation record and services can be provided against it.
+                (EX: Authorization adds more hours to a student already participating in the program.)
+                <br/>- <b>Pending Program:</b> Authorization is linked only to a Profile (no Participation record).
+                The Profile is complete (all required information has been entered in the Profile). Waiting on the creation of a Participation record.
+                (EX: Intake is fully complete for a new student in the program. Service Provider needs to contact student and open a Participation record for them.)
+                <br/>- <b>Pending Profile:</b> Authorization is unlinked or 'floating.' No records exist for the student yet. Initial intake needs to be done to get basic Profile information.
+                (EX: Someone is referred from DOR with an authorization without anyone at the LightHouse being notified first.) 
+
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+  
+      
+      
+  </apex:pageBlock>
+
+</apex:page>

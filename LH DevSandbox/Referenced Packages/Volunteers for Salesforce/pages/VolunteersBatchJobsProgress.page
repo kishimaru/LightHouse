@@ -1,0 +1,69 @@
+<!-- 
+    Copyright (c) 2010, 2016, David Habib, DJH Consulting, djhconsulting.com
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of
+       its contributors may be used to endorse or promote products derived
+       from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+    POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:page controller="GW_Volunteers.VOL_CTRL_BatchProgress" tabStyle="Process_Recurrence_Schedules__tab" >
+	
+	<style>
+	ul.err li {
+		list-style-type: none;
+		color: #cc0000;
+		font-weight: bold;
+	}
+	
+	</style>
+
+	<apex:sectionHeader title="Process Recurrence Schedules" />
+	<apex:form >
+		<apex:pageBlock >
+			<apex:pageBlockButtons rendered="{!batching}">
+				<apex:commandButton action="{!rollup}" value="Begin" disabled="{!batchRunning}" />
+				<apex:commandButton action="{!cancel}" value="Close" />
+			</apex:pageBlockButtons>
+			<apex:messages styleClass="err" />
+			<apex:outputText rendered="{!batching}">
+				<p>Volunteers for Salesforce supports Volunteer Recurrence Schedules and Job Recurrence Schedules with the help of a batch process to
+				create future shifts and assign volunteers to them.  You can run this process manually, by clicking the Begin button, or you can schedule it
+				to automatically run nightly.</p>
+				<p>You will see a progress bar below for the most recent batch process.
+				 The process may take some time; it will take longer the more data you have in your database.  You can close this page 
+				and the process will continue in the background.</p>
+			</apex:outputText>
+					
+			<p>To view currently scheduled jobs, go to the 
+		       				<a  href='/08e?setupid=ScheduledJobs'>Scheduled Jobs page.</a></p>
+			
+			<p>To schedule the Recurrence Schedules process to run automatically, go to the 
+		       				<a  href='/ui/setup/apex/batch/ScheduleBatchApexPage'>Schedule Apex Jobs page.</a></p>
+		</apex:pageBlock>
+		<apex:outputPanel >
+			<c:batchJobs strBatchComponentLabel="Process Recurrence Schedules Progress" cNumberOfJobs="1" />
+		</apex:outputPanel>
+	</apex:form>
+</apex:page>

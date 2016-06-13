@@ -1,0 +1,23 @@
+<apex:page standardController="Profile__c" tabStyle="Profile__c">
+    <apex:pageBlock title="New Profile">
+        <apex:pageBlockSection >
+            A Profile contains descriptive information about a LightHouse student.;
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >        
+            <h1>To create a new Profile:</h1>
+        </apex:pageBlockSection>        
+        <apex:pageBlockSection >
+            1. Find the Contact you wish to create a Profile for;
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >
+            2. In that Contact's page, go to the Profile section;
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >
+            3. Click the 'New Profile' button.
+        </apex:pageBlockSection>    
+        <apex:pageBlockSection >
+            <i>Questions? Contact your system administrator.</i>
+        </apex:pageBlockSection>            
+   </apex:pageBlock>
+  
+</apex:page>

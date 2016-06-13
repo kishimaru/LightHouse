@@ -1,0 +1,121 @@
+<!-- 
+    Copyright (c) 2010, 2016, David Habib, DJH Consulting, djhconsulting.com
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of
+       its contributors may be used to endorse or promote products derived
+       from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+    POSSIBILITY OF SUCH DAMAGE.
+-->
+ 
+<apex:page controller="GW_Volunteers.VOL_CTRL_VolunteersCampaignWizard" title="{!$Label.gw_volunteers__labelVolunteersWizardTitle}" >
+
+    <apex:sectionHeader title="{!$Label.gw_volunteers__labelVolunteersWizardTitle}" />      
+        <p><em>{!$Label.gw_volunteers__labelVolunteersWizardHelp}</em></p>          
+    <apex:form > 
+        
+        <apex:pageBlock title="{!$Label.gw_volunteers__labelVolunteersWizardNewCampaignTitle}" mode="edit">
+            <apex:pageMessages />
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.gw_volunteers__labelButtonSave}" action="{!Save}" />
+                <apex:commandButton value="{!$Label.gw_volunteers__labelButtonCancel}" immediate="true" action="{!URLFOR($Action.Volunteer_Job__c.Tab,$ObjectType.Volunteer_Job__c)}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelVolunteersWizardCampaignInformation}" columns="1" >            
+				<!--  now add fields the user can specify -->
+				<apex:repeat value="{!$ObjectType.Campaign.FieldSets.GW_Volunteers__VolunteersWizardFS}" var="f" >
+					<apex:inputField value="{!cmpVols[f]}" required="{!IF(OR(f.DBRequired, f.Required), 'true', 'false')}" /> 
+	  			</apex:repeat>        
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelVolunteersWizardJobsAndShifts}" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputText style="font-style:italic" value="{!$Label.gw_volunteers__labelVolunteersWizardJobAndShiftHelp}" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="2" id="panelJobsAndShifts" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardClone}" />
+	            	<apex:pageBlockSectionItem > 
+	                    <apex:selectList value="{!campaignIdClone}" size="1" >
+	                        <apex:selectOptions value="{!listSOVolunteersCampaigns}" /> 
+	               	        <apex:actionSupport immediate="false" event="onchange" rerender="panelJobsAndShifts" 
+	               	        	status="retrieveStatus" action="{!ChangeCampaign}" />                        
+	                    </apex:selectList>  
+			            <apex:actionStatus startText="{!$Label.gw_volunteers__labelMessageLoading}" stopText=" " id="retrieveStatus" startStyle="color:green; font-style:italic" />
+	   				</apex:pageBlockSectionItem>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardSampleJobs}" rendered="{!campaignIdClone == null}"/>
+                    <apex:selectList value="{!cSampleJobs}" size="1" rendered="{!campaignIdClone == null}">
+                        <apex:selectOption itemValue="0" itemLabel="" /> 
+                        <apex:selectOption itemValue="1" /> 
+                        <apex:selectOption itemValue="2" /> 
+                        <apex:selectOption itemValue="3" /> 
+                        <apex:selectOption itemValue="4" /> 
+                        <apex:selectOption itemValue="5" /> 
+                    </apex:selectList>  
+                </apex:pageBlockSectionItem>
+                                
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardFirstShiftDate}"  rendered="{!campaignIdClone != null}"/>
+	                <apex:outputField value="{!cmpShiftDates.StartDate}" rendered="{!campaignIdClone != null}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardSampleShifts}" rendered="{!campaignIdClone == null}"/>
+                    <apex:selectList value="{!cSampleShifts}" size="1" rendered="{!campaignIdClone == null}">
+                        <apex:selectOption itemValue="0" itemLabel="" /> 
+                        <apex:selectOption itemValue="1" /> 
+                        <apex:selectOption itemValue="2" /> 
+                        <apex:selectOption itemValue="3" /> 
+                        <apex:selectOption itemValue="4" /> 
+                        <apex:selectOption itemValue="5" /> 
+                    </apex:selectList>  
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!campaignIdClone != null}" >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardNewShiftDate}"  />
+                    <apex:inputField value="{!cmpShiftDates.EndDate}" />                	
+                </apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+				
+                <apex:pageBlockSectionItem rendered="{!campaignIdClone != null}" >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardCopyVolunteers}"  />
+                    <apex:inputCheckbox value="{!fCopyVolunteers}" />                	
+				</apex:pageBlockSectionItem>
+
+				<apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!campaignIdClone != null}" >
+                    <apex:outputText value="{!$Label.gw_volunteers__labelVolunteersWizardOverrideHoursStatus}" />
+                    <apex:inputField value="{!hoursStatus.GW_Volunteers__Status__c}" />                	
+				</apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>    
+</apex:page>

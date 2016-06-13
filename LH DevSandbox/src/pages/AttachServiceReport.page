@@ -1,0 +1,15 @@
+<!-- This VF page should merely display a confirmation message with a Save and Cancel button for linking up the report. --> 
+
+<apex:page standardController="Service_Reporting__c" Extensions="attachReport" showHeader="false" sideBar="false">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:outputText value="Upload the current pdf version of this report in the Notes and Attachments section of this record?"/>
+            </apex:pageBlockSection><br/><br/>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!attachReport}" />
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,4 @@
+<apex:page showHeader="True" tabstyle="Unit_of_Service__c">
+    <apex:ListViews type="Unit_of_Service__c" />
+
+</apex:page>

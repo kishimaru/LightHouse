@@ -1,0 +1,27 @@
+<apex:page showHeader="true" sidebar="false" standardStylesheets="true">
+	<apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" />     
+	
+	<style>
+	*{font-family:SalesforceSans-Regular;}
+	
+	.panel-primary > .panel-heading {
+			background-color: #16325c;
+	}
+	
+	</style>
+	
+	<div class="slds-grid--frame" role="main">
+	<div class="container theme-showcase">
+	    <c:LH_Nav_Bar /> 
+		<c:LH_remotesitehelper rssName="LH_Remote_Site"
+			rssDescription="Remote site used for deploying fields and triggers used by Lookup Helper."
+			pageOverview="A Remote Site is required in order to deploy lookup fields, and realtime triggers through the Lookup Helper user interface."
+			pageSectionTitle="Lookup Helper Remote Site Creation Page"
+			pageSectionSubTitle="Create a Remote Site"
+			/>
+	</div>
+	</div>
+</apex:page>

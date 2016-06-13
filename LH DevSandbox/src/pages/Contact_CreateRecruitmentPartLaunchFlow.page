@@ -1,0 +1,5 @@
+<apex:page sidebar="false" standardcontroller="Contact" extensions="con_RedirectToRecruitmentPart" tabStyle="Contact" >
+  <flow:interview name="Contact_NewRecruitmentParticipation" interview="{!aFlow}" finishLocation="{!FinishPage}">
+      <apex:param name="ThisContactID" value="{!Contact.Id}"/>
+  </flow:interview>
+</apex:page>

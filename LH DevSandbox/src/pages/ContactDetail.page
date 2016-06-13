@@ -1,0 +1,22 @@
+<apex:page standardController="Contact">
+    <!-- This page is identical to the standard Contact layout EXCEPT that it hides the action links (Edit) in the Profiles section.-->
+    <!-- This will ensure that edits to the Profile can only be done via the 'Edit Profile' button on the Profile detail page, which enables record-locking for editing. -->
+    
+    <style>        
+        
+        <!-- This works: #\30 031a00000GdH54_00N1a000006Sc2F_body .actionColumn {
+        display:none;
+        visibility:hidden;
+        }-->
+        
+        [id*='00N1a000006Sc2F_body'] .actionColumn {
+            display:none;
+            visibility:hidden;
+        }
+        
+    </style>
+    <apex:detail />
+    
+
+
+</apex:page>

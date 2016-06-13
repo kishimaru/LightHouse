@@ -1,0 +1,1 @@
+<apex:page standardController="Participation__c" action="{!URLFOR($Action.Participant__c.New, null, ['Name'='Derp'], true)}"/>

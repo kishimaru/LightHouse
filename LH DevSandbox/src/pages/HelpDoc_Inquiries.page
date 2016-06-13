@@ -1,0 +1,97 @@
+<apex:page showheader="false" sidebar="false" >
+  <!-- Help documentation for Inquiries page -->
+
+
+<h1>Inquiries</h1>
+<br/><br/>
+
+<h1>Purpose and Description</h1>
+<br/><br/>
+
+<h1>Important Notes</h1>
+<br/><br/>
+
+Click the New button in the Inquiries tab. --> !!! KEEP in mind that the assignment rules below are active and could cause an email to go out to one of the people below.  (I've played around with Inquiries before to Debbie and just gave her a heads up that I was testing...)
+
+Notes: Made the changes suggested (TTY/VP; added Country, State, County; removed Vision Status; removed HKNC and Ed Roberts from Location picklist (since any referrals to Sook Hee would go through Debbie, right?); reworded: 'Company (if potential student enter 'Student')'; checked 'Assign using active assignment rule' by default; removed 'Staff Contacted' field.
+
+Explanations:
+Staff Responsible is the 'owner' of the record.  It changes based on the routing assignments below IF...
+'Assign using active assignment rule' checkbox is marked.  I can't change the Optional section header, I can't put a help icon, and I can't rename that checkbox -- I looked into all of those possibilities.  I also can't add another section header that will provide more information unless I also add a field.
+
+Salesforce requires Company be filled in.  For Students (that don't have a company), the default value should be 'Student.'  (I looked into what I was doing, and actually, it doesn't matter what's in there as long as it's non-empty.  The Household/Org record will get overwritten with the name of the student.)
+
+Routing assignments:
+
+    Location: LightHouse Headquarters; Department/Program: Rehab > Debbie
+    Location: LightHouse of Marin; Department/Program: Rehab > Jeff
+    Department/Program: EHC > Taccarra
+    Location: LightHouse of the North Coast > Janet
+    Department/Program: Youth > Jamey
+    Department/Program: Employment > Kate
+    Department/Program: Adult/Senior > Molly
+    Department/Program: Counseling > Connie
+
+<h1>Fields</h1>
+
+
+
+
+
+  <apex:pageBlock title="Inquiries">
+  
+        <style>
+            body .bPageBlock .pbBody .black .pbSubheader{
+                background-color:#000000;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader{
+                background-color:#c0c0c0;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader h3{
+                color:#000;
+            }
+        </style>
+        
+
+
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Purpose and Description" id="section1">
+                <h1>Purpose:</h1> Authorizations track official forms from external agencies like DOR and VA that authorize services.  These records can also be used internally to approve services billed to a specific payment source.<br/><br/>
+
+
+            
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Important Notes" id="section0">
+            
+                <h1>Creating new authorizations:</h1> New Authorizations should be created from a student's <b>Participation</b> record in the appropriate program.
+                If the student does not have a Participation record, click the New button in the Authorization tab.<br/><br/>
+                <h1>Owner and Backup Owner:</h1> Authorizations are automatically assigned to an 'Owner' and 'Owner Backup.'  Auto-alerts 
+                are sent via email to these staff when new authorizations are created.  Assignments are as follows:<br/>
+                <b>- New students not yet in the system (no Profile) - OR - Returning students without an active Participation in program:</b> Main <b>intake</b> person for a given program depending on location.<br/>
+                <b>- Continuing students (active Participation in program):</b> Service provider/Owner of the student's Participation record.<br/>
+                
+                <br/><br/>
+                <h1>Service Reporting and Billing:</h1> Both Service Reports and Billing Requests must be associated with a specific Authorization record.
+                
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Fields" id="section2">
+
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+  
+      
+      
+  </apex:pageBlock>
+
+</apex:page>

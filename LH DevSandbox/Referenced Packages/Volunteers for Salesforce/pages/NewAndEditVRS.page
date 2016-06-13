@@ -1,0 +1,68 @@
+<!-- 
+    Copyright (c) 2010, 2016, David Habib, DJH Consulting, djhconsulting.com
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of
+       its contributors may be used to endorse or promote products derived
+       from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+    POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<apex:page standardController="GW_Volunteers__Volunteer_Recurrence_Schedule__c" extensions="GW_Volunteers.VOL_CTRL_NewAndEditVRS" title="{!$ObjectType.GW_Volunteers__Volunteer_Recurrence_Schedule__c.Label}" tabStyle="GW_Volunteers__Volunteer_Recurrence_Schedule__c" >
+	<apex:sectionHeader title="{!$ObjectType.GW_Volunteers__Volunteer_Recurrence_Schedule__c.Label}" subtitle="{!$ObjectType.GW_Volunteers__Volunteer_Recurrence_Schedule__c.Label}" />	
+	<apex:form >
+		<apex:pageBlock title="{!$ObjectType.GW_Volunteers__Volunteer_Recurrence_Schedule__c.Label}" mode="edit" id="pbMain" >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!Save}" value="{!$Label.gw_volunteers__labelButtonSave}"/>
+                <apex:commandButton action="{!Cancel}" value="{!$Label.gw_volunteers__labelButtonCancel}" immediate="true"/>
+            </apex:pageBlockButtons> 
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelInformation}" columns="1" >                        
+				<!--  now add fields the user can specify -->
+				<apex:repeat value="{!$ObjectType.GW_Volunteers__Volunteer_Recurrence_Schedule__c.FieldSets.GW_Volunteers__NewAndEditVRSFS}" var="f" >
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="{!f.Label}" />
+						<apex:actionRegion >
+							<apex:inputField value="{!vrs[f]}" required="{!IF(OR(f.DBRequired, f.Required), 'true', 'false')}" >
+		               	        <apex:actionSupport immediate="false" event="onchange" 
+		               	        	rerender="pbsJRS" status="retrieveStatus" rendered="{!IF(f == 'GW_Volunteers__Volunteer_Job__c', 'true', 'false')}" 
+		               	        	action="{!refreshListSOJRS}" />                        
+							</apex:inputField> 
+						</apex:actionRegion>
+					</apex:pageBlockSectionItem>
+	  			</apex:repeat>                    
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelCopySchedule}" columns="1" id="pbsJRS" >
+              <apex:actionRegion >
+				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.GW_Volunteers__Job_Recurrence_Schedule__c.Label}" />
+			    	<apex:selectList value="{!jrsId}" size="1" required="false">
+			    		<apex:selectOptions value="{!listSOJRS}" />			    		
+               	        <apex:actionSupport immediate="false" event="onchange" rerender="pbMain" status="retrieveStatus" action="{!copyScheduleFromJRS}" />                        
+			    	</apex:selectList>									    	
+			    </apex:pageBlockSectionItem>
+			    <apex:actionStatus startText="{!$Label.gw_volunteers__labelMessageLoading}" stopText=" " id="retrieveStatus" startStyle="color:green; font-style:italic" />
+			  </apex:actionRegion>			    
+			</apex:pageBlockSection>
+        </apex:pageBlock>	
+	</apex:form> 
+</apex:page>

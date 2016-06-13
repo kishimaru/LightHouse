@@ -1,0 +1,42 @@
+<apex:page controller="LH.LH_All_Settings_Controller" sidebar="false" >
+
+	<apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" />     
+
+	<style type="text/css">
+		*{font-family:SalesforceSans-Regular;}
+		
+		.panel-primary > .panel-heading {
+			background-color: #16325c !important;
+		}
+		
+	</style>
+	
+<div class="slds-grid--frame" role="main">
+<div class="container theme-showcase">
+	<c:LH_Nav_Bar />
+		
+	<script>
+    document.getElementById('support').className = "active";
+    </script>
+	<apex:form >
+		<div class="row">
+	    	<div class="col-sm-12">
+	        	<div class="panel panel-primary">
+	            	<div class="panel-heading">
+	              		<h3 class="panel-title">Support Resources</h3>
+	            	</div>
+					<div class="panel-body" style="font-size:20px;">
+						<apex:outputLink id="trainingSiteLink" target="_blank" value="http://www.passagetechnology.com/lookup-helper-training">Lookup Helper Training Site</apex:outputLink>
+						<br></br>
+						<apex:outputLink value="mailto:support@passagetech.com">Email Support</apex:outputLink>
+					</div>
+				</div>
+	     	</div>
+		 </div> <!-- End of row div -->
+	</apex:form>
+</div>
+</div>
+</apex:page>

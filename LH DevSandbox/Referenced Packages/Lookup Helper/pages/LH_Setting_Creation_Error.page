@@ -1,0 +1,10 @@
+<apex:page standardController="LH__Lookup_Helper_Setting__c">
+<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" />     
+
+<style>
+	*{font-family:SalesforceSans-Regular;}
+</style>
+
+<h1>Lookup Helper Settings may only be created from the Lookup Helper Menu.</h1>
+
+</apex:page>

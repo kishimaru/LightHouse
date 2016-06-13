@@ -1,0 +1,108 @@
+<apex:page standardController="Service_Reporting__c" renderas="pdf">  
+    <!-- Stylesheets -->
+    <apex:stylesheet value="{!$Resource.PDFDocumentStyle}" />
+
+    <!-- First Page Header -->
+    <c:PDFHeaderFooter type="header" position="left">
+        <div style="padding: 10px"><apex:image value="/img/seasonLogos/2015_summer.png"/></div>
+    </c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="center">First Center Header Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="right">First Right Header Text</c:PDFHeaderFooter>
+
+    <!-- All Pages Header -->
+    <c:PDFHeaderFooter type="header" position="left">
+        <div style="padding: 10px; background-color: #ccc">Your Logo Here</div>
+    </c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="center">Second Center Header Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="right">Second Right Header Text</c:PDFHeaderFooter>
+
+    <!-- All Pages Footer -->
+    <c:PDFHeaderFooter type="footer" position="left">First Left Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="center">First Center Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="right" showPageNumbers="true"/>
+
+    <!-- Content -->
+        <apex:pageBlock Title="{!Service_Reporting__c.Name}">
+
+            <apex:pageBlockSection columns="1">                
+
+                <!-- Recipient and report date -->
+                <apex:pageBlockSectionItem >
+                    Attention &nbsp;
+                    
+                    <apex:outputField value="{!Service_Reporting__c.Recipient_Name__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Date
+                    <apex:outputField value="{!Service_Reporting__c.Date_of_Report__c}" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <!-- Horizontal line -->
+            <hr/>
+            <apex:pageBlockSection columns="1">
+                
+                <!-- Client name, authorization num -->
+                <apex:pageBlockSectionItem >
+                    Client
+                    <apex:outputField value="{!Service_Reporting__c.Student_Name__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    Auth #
+                    <apex:outputField value="{!Service_Reporting__c.Authorization_Title__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    From
+                    <apex:outputField value="{!Service_Reporting__c.Reporting_Period_Start_Date__c}" />
+                </apex:pageBlockSectionItem>          
+                <apex:pageBlockSectionItem >
+                    To
+                    <apex:outputField value="{!Service_Reporting__c.Reporting_Period_End_Date__c}" />
+                </apex:pageBlockSectionItem>  
+                <apex:pageBlockSectionItem >
+                    Service hrs
+                    <apex:outputField value="{!Service_Reporting__c.Number_of_Service_Units__c}" />
+                </apex:pageBlockSectionItem>  
+                <apex:pageBlockSectionItem >
+                    Instruction &nbsp;
+                    <apex:outputField value="{!Service_Reporting__c.Authorization_Number__c}" />
+                </apex:pageBlockSectionItem>  
+                <apex:pageBlockSectionItem >
+                    Instructor &nbsp;
+                    <apex:outputField value="{!Service_Reporting__c.Service_Provider__c}" />
+                </apex:pageBlockSectionItem>
+                
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1">
+                
+                <br/>
+                
+                <!-- Summary -->
+                <b>Summary</b>
+                <apex:pageBlockSectionItem >
+                    {!Service_Reporting__c.Assessment_Service_Summary__c}
+                </apex:pageBlockSectionItem>     
+                
+                <br/>
+                <br/>
+                
+                <!-- Recommendations -->
+                <b>Recommendations</b>
+                <apex:pageBlockSectionItem >
+                    {!Service_Reporting__c.Recommendations__c}
+                </apex:pageBlockSectionItem>   
+                      
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+
+
+
+    <!-- Last Page Footer -->
+    <c:PDFHeaderFooter type="footer" position="left">Second Left Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="center">Second Center Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="right" showPageNumbers="true"/>
+    
+
+</apex:page>

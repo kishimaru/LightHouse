@@ -1,0 +1,262 @@
+<apex:page id="thisPage" title="Edit Unit of Service" standardController="Unit_of_Service__c" extensions="con_ExtensionAuthLookup" tabStyle="Unit_of_Service__c">  <!-- try this:  https://developer.salesforce.com/forums/?id=906F000000097KQIAY     http://salesforce.stackexchange.com/questions/65843/an-aproach-to-a-solution-of-an-autofill-zipcode-visualforce-page  and here's the id: 00355000005UjCI -->
+    
+    <!-- Use this for testing: masterId=a0F55000000LQAZ&id=a0J550000003Abl -->
+
+    <!-- Context: This page overrides the List button on Unit of Service for both New and Edit. -->
+    <!-- URL should contain MasterID, the parent Participant ID, for creating new records.  Id will be blank for new or filled in for existing UOS. -->
+    
+    <!-- Functionality: All javascript functions appear at the bottom of this page. -->
+    <!-- When page first loads, it calls a Javascript function 'resetUnitsRemaining.'-->
+    <!-- This resetUnitsRemaining calls a get function in the controller extension that returns the number of units remaining on the authorization and sets the output message text field. --> 
+
+    <!-- Authorization field: Bound to a picklist input instead of using default lookup functionality. -->
+    <!-- The onchange event on that field triggers onAuthLookup function that calls a javascript remoting function in the controller. -->
+    <!-- If the selected Authorization is the same as the original (when a UOS record is edited and already has an Authorization), then resetUnitsRemaining is called. -->
+    <!-- Otherwise, the hidden input text field is set with the number of units remaining on the Authorization and authHrsRemaining is called to subtract the current Billable Units. -->
+    
+    <!-- Service Time and Billable Units: Onchange events trigger auto-setting and authHrsRemaining calculations.-->
+    <style>
+        .validationError { color: #d74c3b; font-weight: bold; height: 30px; font-size: 100%;}
+    </style>
+    
+    <apex:form id="thisForm" >
+
+        <!-- Hidden input field that stores remaining units on Authorization retrieved via look up function. -->
+        <apex:inputHidden id="hiddenInput" value="{!unitsLeftHidden}"/>
+    
+        <apex:pageBlock id="thisPageBlock" title="Unit of Service Edit {!Unit_of_Service__c.Name}" mode="edit">
+        
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save"/>
+                <apex:commandButton action="{!saveandnew}" value="Save & New"/>
+                <apex:commandButton action="{!saveandcopy}" value="Save & Copy"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            
+            <apex:messages styleClass="validationError" />
+
+            <apex:pageBlockSection id="UOSBlSection" columns="1" title="UOS Information">
+                    <!-- This is in edit layout (although not editable) but not in new layout <apex:outputField value="{!Unit_of_Service__c.Name}" />  -->                 
+                    <apex:outputField value="{!Unit_of_Service__c.Participant__c}" id="Part" />
+                    <apex:outputField value="{!Unit_of_Service__c.Profile__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Service_Date__c}" />                  
+                    <!-- <apex:inputField value="{!Unit_of_Service__c.Location__c}" /> Not needed anymore. -->
+                    <apex:inputField value="{!Unit_of_Service__c.Service_Provider__c}" id="SProv" /> 
+                    
+                    <!-- Authorization drop-down -->
+                    <apex:selectList size="1" value="{!Unit_of_Service__c.Authorization__c}" onchange="onAuthLookup();" id="authID">
+                        <apex:selectOptions value="{!AuthList}"></apex:selectOptions>
+                        <apex:outputText style="color:#f00;" id="errmsg" value="" />
+                    </apex:selectList>                 
+                    
+                    <!-- Authorization lookup: replaced with drop-down -->
+                    <!-- <apex:inputField value="{!Unit_of_Service__c.Authorization__c}" onchange="onAuthLookup();" id="authID" >
+                        <apex:outputText style="color:#f00;" id="errmsg" value="" />
+                    </apex:inputField> -->
+
+                    <apex:inputField value="{!Unit_of_Service__c.Location_Picklist__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Lesson_Location__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Client_Travel_Mode__c}" /> 
+                    <apex:inputField value="{!Unit_of_Service__c.Trainer_Travel_Mode__c}" />                           
+                    <apex:outputField value="{!Unit_of_Service__c.Program__c}" rendered="false" />
+                    <apex:inputField value="{!Unit_of_Service__c.Event_Workshop__c}" />                                          
+                    <apex:inputField value="{!Unit_of_Service__c.Class_Component__c}" />
+                    <!-- <apex:inputField value="{!Unit_of_Service__c.Service__c}" /> -->
+                    
+                    <!-- Services drop-down -->
+                    <!-- Had to put in PBsectionitem and output panel, etc. in order for Required Mark to show up! -->
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Service" for="svcID"/>
+                    
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+
+                            <apex:selectList size="1" value="{!Unit_of_Service__c.Service__c}" id="svcID" required="true" >
+                                <apex:selectOptions value="{!SvcList}"></apex:selectOptions>
+                                <apex:outputText style="color:#f00;" id="errmsg_svc" value="" />
+                            </apex:selectList>
+                    
+                        </apex:outputPanel> 
+                    </apex:PageBlockSectionItem>
+
+                                        
+                    <!-- KI 4/26/2016 replaced Equipment LoanGrant lookup with drop-down -->                   
+                    <!-- <apex:inputField value="{!Unit_of_Service__c.Equipment_Requested__c}" /> -->
+                    
+                    <!-- Equipment Loaned/Granted drop-down -->
+                    <apex:PageBlockSectionItem >
+                        <apex:outputLabel value="Equipment Loaned/Granted" for="eqLGID"/>
+                            <apex:selectList size="1" value="{!Unit_of_Service__c.Equipment_Requested__c}" id="eqLGID" >
+                                <apex:selectOptions value="{!eqList}"></apex:selectOptions>
+                                <apex:outputText style="color:#f00;" id="errmsg_svc" value="" />
+                            </apex:selectList>
+                    </apex:PageBlockSectionItem>
+                    
+                                         
+                    <apex:inputField value="{!Unit_of_Service__c.Equipment_Loaned_Granted__c}" />                    
+                    <apex:inputField value="{!Unit_of_Service__c.Delivery_of_Services__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Service_Time__c}" id="ServiceTime" onchange="timeChange();" />                                        
+                    
+                    <!-- Display text -->
+                    <apex:inputField value="{!Unit_of_Service__c.Billable_Units__c}" id="BillableUnits" onchange="authHrsRemaining();" >
+                        <apex:inputField value="{!Unit_of_Service__c.Type_of_Units__c}" />                    
+                        <!-- <apex:outputText value="{!authMessage}" id="HrsRemainingText"/> -->
+                        <apex:outputField value="{!Unit_of_Service__c.Authorized_Units_Remaining__c}" id="HrsRemainingText"/>
+                    </apex:inputField>                   
+                    
+                    <!-- Payment source drop-down replaces lookup -->
+                    <!-- Had to put in PBsectionitem and output panel, etc. in order for Required Mark to show up! -->
+                    <apex:PageBlockSectionItem id="pmtsection">
+                        <apex:outputLabel value="Payment Source" for="pmtID"/>                    
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>                          
+                            <apex:selectList size="1" value="{!Unit_of_Service__c.Payment_Source__c}" id="pmtID" required="true">
+                                <apex:selectOptions value="{!PmtList}"></apex:selectOptions>
+                                <apex:outputText style="color:#f00;" id="errmsg_pmt" value="" />
+                            </apex:selectList>
+                        </apex:outputPanel> 
+                    </apex:PageBlockSectionItem>
+                                                         
+                    <apex:inputField value="{!Unit_of_Service__c.Indirect_Client_Mtg_Hours__c}"/>
+                    <apex:inputField value="{!Unit_of_Service__c.Travel_Time__c}" id="testing"/>
+                    <apex:inputField value="{!Unit_of_Service__c.Cancellation_Reason__c}"/>
+                    <apex:inputField value="{!Unit_of_Service__c.Progress_Lesson_Notes__c}" id="ProgressNoteRichText" html-data-escape="false"/>
+                    <script>
+                        var progressNotesInputId = '{!$Component.ProgressNoteRichText}';
+                    </script>
+            </apex:pageBlockSection>
+                      
+            <apex:pageBlockSection id="travelReimBlSection" columns="1" title="Travel Reimbursement Info">
+                    <apex:inputField value="{!Unit_of_Service__c.Travel_Reimbursement_Payment_Source__c}" /> 
+                    <apex:inputField value="{!Unit_of_Service__c.Beginning_Odometer__c}" />  
+                    <apex:inputField value="{!Unit_of_Service__c.Ending_Odometer__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Other_Travel_Expenses__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Other_Travel_Expenses_Description__c}" />   
+            </apex:pageBlockSection>     
+            
+            <apex:pageBlockSection id="sysInfoBlSection" columns="1" title="System Information">
+                    <!-- <apex:inputField value="{!Unit_of_Service__c.Service_Reporting__c}" /> -->
+                    <apex:inputField value="{!Unit_of_Service__c.Request_Delete__c}" />
+                    <apex:inputField value="{!Unit_of_Service__c.Reason_for_Deletion__c}" />
+            </apex:pageBlockSection>            
+            
+        </apex:pageBlock>
+
+    </apex:form>
+    
+    
+    <!-- For jqery calls -->
+    <apex:includescript value="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" />
+    <apex:includescript value="/soap/ajax/32.0/connection.js" />
+    
+    <!-- Javascript functions to set billable units and dynamically look up remaining authorization units.-->
+    <script type="text/javascript">
+        
+        // On page loading, initialize units remaining text.
+        // Look up units remaining if there is an existing authorization.
+        // Needs to be smarter -- if there is an authorization already selected, we could either be in an existing record or have tried (and failed) to save a new one.
+        // If we are editing an existing record, this is the right behavior.  If we are saving a new record (no id in URL), then we need to invoke authHrsRemaining.
+        var myAuth = document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.authID}');
+        
+        if (myAuth && myAuth.value) {
+            resetUnitsRemaining();
+        } else {
+            document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.BillableUnits.HrsRemainingText}').innerHTML = 'Authorized units remaining: 0';
+        }
+        
+        // Trying to figure out how to turn spellcheck on!
+        // var pNote = document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.ProgressNoteRichText}');
+        // pNote.setAttribute("spellcheck","true");
+        
+        // document.getElementsByTagName("textarea")[0].setAttribute("spellcheck", "true");
+    
+        
+    //$(document).ready(function() {
+    //  });
+    var editor_frame = $('iframe[title*=Editor]');
+    editor_frame.contents().find('body').attr('spellcheck', 'true');
+        
+    
+        // $('iframe[id*=ProgressNoteRichText]').contents().find('body').attr('spellcheck','true');
+
+        function resetUnitsRemaining () {
+            // If updating an existing record and URL contains ID, set hidden input field to the number of hours remaining on original Authorization independent of this records billable units.  
+            // That way, authHrsRemaining calculation will keep working.
+            // If creating new record and URL does not contain ID, set hidden input field to Units remaining on selected authorization.
+            var indepRemaining = ( '{!$CurrentPage.parameters.Id}' =='' || '{!$CurrentPage.parameters.Clone}' == '1' ) ? parseFloat('{!UnitsRemaining}') : parseFloat('{!UnitsRemaining}') + parseFloat('{!Unit_of_Service__c.Billable_Units__c}');
+            document.getElementById('{!$Component.thisPage.thisForm.hiddenInput}').innerHTML = indepRemaining;
+            authHrsRemaining();               
+        }
+        
+        function timeChange() {
+            var st = $('[id$=ServiceTime]').val();
+            $('[id$=BillableUnits]').val(st);  
+            authHrsRemaining();           
+        }
+
+        function authHrsRemaining() {
+            var unitsLeft =  ( $('[id$=BillableUnits]').val() == '' ) ? document.getElementById('{!$Component.thisPage.thisForm.hiddenInput}').innerHTML :  document.getElementById('{!$Component.thisPage.thisForm.hiddenInput}').innerHTML - $('[id$=BillableUnits]').val();
+            // alert('unitsLeft: '+unitsLeft);
+            var displayText = ( $('[id$=authID]').val() == '' ) ? '' : 'Authorized units remaining: '+unitsLeft;
+            document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.BillableUnits.HrsRemainingText}').innerHTML = displayText;
+            return false;
+       }
+
+    
+        function onAuthLookup() {
+            //Retrieve the current Authorization lookup value.
+            // var authValue = document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.AuthId}_lkid').value; - when using a lookup field.
+            var authValue = document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.AuthId}').value; // for using a selectList field bound to real field.
+            
+            Visualforce.remoting.Manager.invokeAction(
+
+            '{!$RemoteAction.con_ExtensionAuthLookup.getAuthString}',
+                authValue,
+                function(result, event){
+
+                    if (event.status) {
+                        // Result should be a concatenation of: units remaining AND payment source retrieved from looking up the current Authorization selected.
+                        // Result returned in this format: units||paymentsourceID||paymentsourceName.  Split function returns an array of each component.
+                        var concatResult = result;
+                        var resultArray = concatResult.split('||');
+                        var unitsRetrieved = resultArray[0];
+                        var paySourceID = resultArray[1];
+                        var paySourceName = resultArray[2];
+
+                        // var unitsRetrieved = result;
+                        // alert('units retrieved: '+unitsRetrieved);
+                        
+                        // Set Payment Source based on selected authorization
+                        document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.pmtsection.pmtID}').value = paySourceID;
+                        document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.pmtsection.pmtID}').label = paySourceName;                        
+                        
+                        // Check to see whether the currently selected Authorization is the same as the original Authorization.  For some reason, the lookup value always has AAA appended at the end of the ID, so trim that off to compare IDs.
+                        var currentAuthID = '{!Unit_of_Service__c.Authorization__c}';
+                        var len = currentAuthID.length - 3;
+                        var currentAuthIDFixed = currentAuthID.substr(0, len);
+                        // alert('test');
+
+                        if (authValue == currentAuthIDFixed) {
+                            // alert('current auth same as orig');
+                            resetUnitsRemaining();
+
+                        } else {
+                            document.getElementById('{!$Component.thisPage.thisForm.hiddenInput}').innerHTML = unitsRetrieved;
+                            // alert('unitsRetrieved nested: '+unitsRetrieved+'; Hidden input: '+ document.getElementById('{!$Component.thisPage.thisForm.hiddenInput}').innerHtml);
+                            authHrsRemaining();
+                        }
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById('{!$Component.thisPage.thisForm.thisPageBlock.UOSBlSection.BillableUnits.HrsRemainingText}').innerHTML =
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrors").innerHTML = event.message;
+                    }
+                },
+                {escape: true}
+                ) ; 
+        }
+     
+    </script>
+
+</apex:page>

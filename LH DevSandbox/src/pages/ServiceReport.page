@@ -1,0 +1,110 @@
+<apex:page standardController="Service_Reporting__c" renderAs="pdf" showHeader="false" sideBar="false">
+
+<!-- IMPORTANT!!!! Any updates to this VF page need to be mirrored in Email Template that's used to email this report! -->
+
+    <apex:stylesheet value="{!$Resource.PDFDocumentStyleUpdated}" />
+ 
+    <!-- For header and footer formatting -->   
+    <head>
+        <style type="text/css" media="print">
+            @page {
+                @top-center {
+                    content: element(header);
+                }
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+            
+            <!-- For now, nothing in the header. If used down the line, figure out how to skip first page with letterhead.-->
+            div.header {
+                padding: 10px;
+                position: running(header);
+            }
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+
+
+    <!-- Letterhead Logo -->
+    <table style="width:100%">
+        <tr>
+    <td style="text-align:center;"><apex:image url="{!$Resource.LH_Letterhead_Updated}" width="350" height="60"/></td>
+        </tr>
+    </table>
+    
+    
+    <div class="content">
+    
+    <h3>{!Service_Reporting__c.Name}</h3>
+    <table>
+        <tr><th>Attn</th>
+            <td><apex:outputText value=" {!Service_Reporting__c.CounselorName__c}" /></td>
+        </tr>
+        <tr><th>Date</th>
+            <td><apex:outputText value=" {!Service_Reporting__c.Date_of_Report__c}" /></td>
+        </tr>
+    </table>
+    
+    <!-- Horizontal line -->
+    <hr/>
+    
+    <table>
+        <tr><th>Client</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Student_Name__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Auth #</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Authorization_Number__c}" escape="false"/></td>
+        </tr>
+        <tr><th>From</th>
+            <td><apex:outputText value=" {!Service_Reporting__c.Reporting_Period_Start_Date__c} " escape="false"/></td>
+        </tr>
+        <tr><th>To</th>
+            <td><apex:outputText value=" {!Service_Reporting__c.Reporting_Period_End_Date__c} " escape="false"/></td>
+        </tr>
+        <tr><th>Service hrs</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Number_of_Service_Units__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Instruction</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Authorization_Title__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Instructor</th>
+            <td><apex:outputText value="{!Service_Reporting__c.ServiceProviderName__c}"/></td>
+        </tr>
+    </table>
+    
+
+<br/><br/>
+
+    
+    <h4>Summary of Services:</h4>
+    <apex:outputText value="{!Service_Reporting__c.Assessment_Service_Summary__c}" escape="false" />   
+    
+    <br/> 
+    
+    <h4>{!IF(Service_Reporting__c.Recommended_Equipment__c == '', '', 'Recommended Equipment:')}</h4>
+    <apex:outputText value="{!Service_Reporting__c.Recommended_Equipment__c}" escape="false" />   
+
+    <br/>
+
+    <h4>{!IF(Service_Reporting__c.Recommended_Equipment__c == '', 'Recommendations', 'Additional Recommendations:')}</h4>
+    <apex:outputText value="{!Service_Reporting__c.Recommendations__c}" escape="false" />
+    
+    </div>
+    
+    
+    <c:PDFHeaderFooter type="footer" position="left">Last modified:<apex:outputText value="{!Service_Reporting__c.LastModifiedDate} " escape="false" /> </c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="right" showpagenumbers="true" />
+
+</apex:page>

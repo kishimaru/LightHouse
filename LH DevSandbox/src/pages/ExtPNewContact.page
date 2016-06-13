@@ -1,0 +1,40 @@
+<apex:page standardController="Provider__c" extensions="con_ExtensionExternalProvider" tabStyle="Contact">
+
+    <style>
+        .txtError { color: #d74c3b; font-weight: bold; height: 30px; font-size: 100%;}
+    </style>
+    
+    <apex:form id="thisForm">
+
+        <apex:pageBlock id="thisPageBlock" title="New Contact" mode="edit">
+        
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveCnt}" value="Save"/> 
+                <apex:commandButton action="{!cancelCnt}" value="Cancel" immediate="true" /> 
+            </apex:pageBlockButtons>
+            
+            <!-- <apex:messages styleClass="txtError" /> -->
+            <apex:pageMessages escape="false" /> <!-- For dupe blocker error messages -->            
+                
+            <apex:pageBlockSection id="pBlSection1" columns="1" title="Contact Information"> 
+             
+                <apex:inputField value="{!ct.Salutation}" />                                   
+                <apex:inputField value="{!ct.FirstName}" />
+                <apex:inputField value="{!ct.LastName}" />
+                <apex:inputField value="{!ct.Title}" label="Title"/>
+                <apex:inputField value="{!ct.Contact_Notes__c}" />
+                <apex:inputField value="{!ct.Phone}" />                               
+                <apex:inputField value="{!ct.Fax}" /> 
+                <apex:inputField value="{!ct.MailingCountryCode}" />
+                <apex:inputField value="{!ct.MailingStreet}" /> 
+                <apex:inputField value="{!ct.MailingCity}" />
+                <apex:inputField value="{!ct.MailingStateCode}" /> 
+                <apex:inputField value="{!ct.MailingPostalCode}" />   
+                                          
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+        
+    </apex:form> 
+  
+</apex:page>

@@ -1,0 +1,58 @@
+<apex:page showheader="false" sidebar="false" >
+  <!-- Help documentation for Staff Units of Service page -->
+  <apex:pageBlock title="Staff Units of Service">
+  
+        <style>
+            body .bPageBlock .pbBody .black .pbSubheader{
+                background-color:#000000;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader{
+                background-color:#c0c0c0;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader h3{
+                color:#000;
+            }
+        </style>
+        
+
+
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Purpose and Description" id="section1">
+                <h1>Purpose:</h1> Staff Units of Service are used to record staff time (in hours) spent on activities not directly related to a student.<br/><br/>
+
+
+            
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Important Notes" id="section0">
+            
+                <h1>Record type:</h1> Choose the type of Staff Unit of Service based on the activity -- Outreach, Mtgs/Admin, etc.
+                The subsequent layout will vary depending on the type of Staff Unit of Service you are entering.<br/><br/>
+                <h1>Owner:</h1> Staff Units of Service are automatically assigned to an 'Owner' based on the logged in user. The owner should be the Staff
+                person whose time is being recorded.<br/><br/>
+                <h1>Changing Owner:</h1> When entering Staff Units of Service on behalf of another person, you should be able to change the 'Owner' by clicking the 'change' link next to the Owner's name.  
+                <br/><br/>
+                <h1>Reporting on Staff Units of Service:</h1> In the sidebar under 'Links' is a link to 'My Staff Units of Service - last month.' This opens a report pre-filtered to show Staff Units of Service
+                you own for the previous month.
+                
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Fields" id="section2">
+
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+  
+      
+      
+  </apex:pageBlock>
+
+</apex:page>

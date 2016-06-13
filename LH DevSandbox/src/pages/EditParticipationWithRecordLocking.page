@@ -1,0 +1,17 @@
+<apex:page id="ParticipationEditPage" Title="Edit Participation" standardController="Participation__c" extensions="con_CheckoutForEditing" action="{!redirectPage}" tabStyle="Participation__c">
+    
+    <!-- Custom Participation Edit VF Page to enable record-locking for editing. -->
+    <!-- Controller looks to see if record checked-out. Page displays error if checked out.-->
+    
+    <apex:form id="prForm" >  
+    
+        <h1>
+        <br/>
+        <apex:outputText id="username" value="{!checkedoutUser}"/> is currently editing this record. Please try again later or contact your system administrator for assistance.
+        </h1>
+        
+
+    </apex:form>
+  
+  
+</apex:page>

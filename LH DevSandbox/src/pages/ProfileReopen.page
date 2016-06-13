@@ -1,0 +1,26 @@
+<apex:page standardController="Profile__c" extensions="con_ProfileReopen" tabStyle="Profile__c" >
+
+    <apex:form id="thisForm" >
+    
+        <apex:pageBlock id="thisPageBlock" title="Reopen Profile for {!Profile__c.Name}" mode="edit">
+        
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save_and_archive}" value="Save"/> <!-- Make special save_archive function that creates two new note records, clears out closure fields and then saves.-->
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            
+            <apex:messages styleClass="validationError" />
+
+            <apex:pageBlockSection id="BlSection" columns="1">
+                    <apex:inputTextarea label="Reopen Details" value="{!ReopenDetails}"/>
+                    <apex:inputField value="{!Profile__c.Date_Rights_Responsibilities_Completed__c}" />
+                    <apex:inputField value="{!Profile__c.Date_Waiver_Completed__c}" />
+                    
+            </apex:pageBlockSection>
+        </apex:pageblock>
+    </apex:form>
+    
+    
+                    
+                    
+</apex:page>

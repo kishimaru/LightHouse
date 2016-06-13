@@ -1,0 +1,35 @@
+<apex:page standardController="Profile__c" extensions="con_ProfileClose" tabStyle="Profile__c" >
+<!-- Used to close out a Profile.  Pass in the user through the URL to set the Closed by field.-->
+
+    <apex:form id="thisForm" >
+    
+        <apex:pageBlock id="thisPageBlock" title="Close Profile for {!Profile__c.Name}" mode="edit">
+        
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save_and_archive}" value="Save"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            
+            <apex:messages styleClass="errorMsg"/>
+
+            <apex:pageBlockSection id="BlSection" columns="1">
+            
+                <apex:pageBlockSectionItem >
+                    <apex:outputlabel value="Date Closed/Archived"/> 
+                    <apex:actionRegion >
+                        <div class = "requiredInput">
+                            <div class = "requiredBlock"></div>   
+                            <apex:inputField value="{!Profile__c.Date_Closed_Archived__c}">
+                            </apex:inputField>
+                        </div>
+                    </apex:actionRegion>                         
+                </apex:pageBlockSectionItem> 
+            
+                <apex:inputField value="{!Profile__c.Reason_for_Closure__c}" />
+                <apex:inputField value="{!Profile__c.Closure_Details__c}" />
+            </apex:pageBlockSection>
+        </apex:pageblock>
+    </apex:form>
+                    
+                    
+</apex:page>

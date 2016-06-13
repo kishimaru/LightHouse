@@ -1,0 +1,4 @@
+<apex:page showHeader="True" tabstyle="Participation__c">
+    <apex:ListViews type="Participation__c" />
+
+</apex:page>

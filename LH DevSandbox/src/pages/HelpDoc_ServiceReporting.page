@@ -1,0 +1,105 @@
+<apex:page showheader="false" sidebar="false" >
+  <!-- Help documentation for Authorization page -->
+  <apex:pageBlock title="Service Reporting">
+  
+        <style>
+            body .bPageBlock .pbBody .black .pbSubheader{
+                background-color:#000000;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader{
+                background-color:#c0c0c0;
+            }
+            body .bPageBlock .pbBody .grey .pbSubheader h3{
+                color:#000;
+            }
+        </style>
+        
+
+
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Purpose and Description" id="section1">
+                <h1>Purpose:</h1> Service Reporting records serve two purposes:<br/><br/>
+                (1) Creating and sending service reports to external counselors; <br/><br/>
+                (2) Generating internal service billing requests to Finance.<br/><br/>
+
+
+            
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Important Notes" id="section0">
+            
+                <h1>Creating new service reporting records:</h1> New Service Reporting records can only be created from the relevant Authorization record.
+                In the Service Reporting section of the Authorization record, click the 'New Service Reporting' button.
+                <br/><br/>
+                <h1>Report:</h1> The following fields are pulled into a formatted PDF report template: <br/>
+                - Recommended LightHouse Services<br/>
+                - Recommended External Services<br/>
+                - Recommended Equipment<br/>
+                - Assessment/Service Summary<br/>
+                - Recommendations
+                <br/><br/>
+                
+                <h1>Link/Concatenate UOS button: </h1>Finds all Units of Service related to this Authorization within the Reporting Period (start/end dates you enter) and 
+                links them to this Service Reporting record.  Populates <b>Progress Notes Concatenated</b> field with the Progress Notes from those Units of Service.
+                <br/><br/>
+                
+                <h1>Progress Notes Concatenated field: </h1>This field is NOT pulled into the report template.  It holds all progress notes from related Units of Service
+                and can be used as a workspace for the report or as a place to copy and paste into the report template fields listed above.  To pull all progress notes for easy report-writing, 
+                do the following:<br/>
+                1. Click "Save" to save the Service Report.<br/>
+                2. Click the "Link/Concatenate UOS" button. All progress notes relevant to this authorization are now pulled into the Service Report.<br/>
+                3. Click "Edit" to complete the report.               
+                <br/><br/>
+                
+                <h1>Preview Report/Billing Request buttons:</h1> First click "Save" to save the report prior to previewing and uploading. 
+                Preview Report displays the report PDF in a Preview window for reviewing. Edits to the report must be made using the 'Edit' button to change the content
+                of the fields above. Preview Billing Request displays a PDF of the billing request for review.<br/><br/>
+                
+                
+                <h1>Upload Report/Billing Request buttons:</h1> Upload Report generates a PDF of the report and uploads it into the Notes and Attachments section of the 
+                Service Reporting record.  Upload Billing Request generates a PDF of the billing request and uploads it into the same Notes and Attachments section. 
+                <br/><br/><b>NOTE:</b> If you upload and then edit the Service Reporting record, the uploaded version may not reflect your changes. 
+                It's a good idea to upload AFTER making all edits. Also note that both reports must be uploaded in order to complete the billing and reporting processes.<br/><br/>
+
+                <h1>Emailing Report/Billing Request</h1>: To email, go to the Activity History section of the Service Reporting record and click the 'Send An Email' button.
+                In the new window that opens, click the <b>Select Template</b> button.  Under the "Folders" drop down box, select "Unfiled Public Email Templates."<br/><br/>
+                
+                <b>- For Service Reports</b>, choose the 'Service Reporting Email' template. In the To/Recipient field, use the lookup 
+                icon to search for the Counselor or contact who should receive the report. In the "Body" field, Dear has been inserted with no name. 
+                You may add a name here if you like. To verify that the correct template is chosen, the "Subject" field should reflect the title of your report.<br/><br/>
+                
+                <b>- For Billing Requests</b>, choose 'Service Billing Email.'  In the To/Recipient field, click the lookup icon
+                and search for Finance Department (of the LightHouse). This will email the report to 1Fin@lighthouse-sf.org. To verify that the correct template is chosen, 
+                the "Subject" field should read, "Auth #" followed by the Authorization number NMED*** and the name of the participant.<br/><br/>
+                
+                These templates will attach the PDF versions of the report or billing request for you.<br/><br/>
+                Click <b>Send</b> when you are ready to send off the email.  You should be bcc'd on the email and receive a copy of it.
+                
+                
+               
+                
+                
+
+                
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel styleClass="black" layout="block">
+            <apex:pageBlockSection title="Fields" id="section2">
+            
+                
+            </apex:pageBlockSection>
+        </apex:outputPanel>
+  
+      
+      
+  </apex:pageBlock>
+
+</apex:page>

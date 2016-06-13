@@ -1,0 +1,18 @@
+<apex:page renderas="pdf">
+    <apex:stylesheet value="{!$Resource.PDFDocumentStyle}" />
+
+    <c:PDFHeaderFooter type="header" position="left">
+       <div style="padding: 10px">
+            <apex:image url="{!$Resource.LH_Letterhead}" width="600" height="100"/>
+        </div>
+    </c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="center">Second Center Header Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="header" position="right">Second Right Header Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="left">First Left Footer Text Heres my footer</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="center">First Center Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="right" showpagenumbers="true" />
+    <h1 style="padding-top: 3000px">My Test Document</h1> Test text
+    <c:PDFHeaderFooter type="footer" position="left">Second Left Footer Text</c:PDFHeaderFooter>
+    <c:PDFHeaderFooter type="footer" position="center">Second Center Footer Text</c:PDFHeaderFooter>
+        <c:PDFHeaderFooter type="footer" position="right" showpagenumbers="true" />
+</apex:page>

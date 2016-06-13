@@ -1,0 +1,343 @@
+<apex:page controller="LH.LH_All_Settings_Controller" sidebar="false" >
+
+    <apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" /> 	 
+<style>
+	*{font-family:SalesforceSans-Regular;}
+
+	.popover-title {
+    	background: #337ab7;
+    	font-weight: bold;
+    	color: white;
+    	font-family: salesforce sans;
+	}
+	 
+	.actionDiv {
+		margin-top:5px;
+		margin-bottom:5px;
+	}
+	
+	.settings-table td {
+		word-break: break-all;
+		font-size: 0.8em;
+		border: 1px solid #ddd !important;
+		font-family:SalesforceSans-Regular;
+	}
+	
+	.settings-table th {
+		font-size: 0.5em !important;
+		text-align:center;
+		font-family:SalesforceSans-Regular;
+	}
+	
+	.panel-primary > .panel-heading {
+			background-color: #16325c;
+	}
+     
+	@media screen and (min-width: 768px)
+	{
+		.settings-table th {
+			font-size: 0.8em !important;
+		}
+		
+		.settings-table td {
+			font-size: 0.8em !important;
+		}
+		
+		.progress span {
+			font-size: 1.0em;
+		}
+	
+		.actionButton1 {
+			font-size: 13px;
+			padding-right:1px;
+			padding-bottom:1px;
+		}
+		
+		.actionButton2 {
+			font-size: 13px;
+			padding-right:1px;
+			padding-left:0px;
+			padding-bottom:1px;
+		}
+		
+		.actionButton3 {
+			font-size: 13px;
+		}
+	}
+	
+	@media screen and (min-width: 1024px)
+	{
+		.settings-table th {
+			font-size: 1.0em !important;
+		}
+		
+		.settings-table td {
+			font-size: 1.0em !important;
+		}
+		
+		.progress span {
+			font-size: 1.1em;
+		}
+		
+		.actionButton1 {
+			font-size: 15px;
+			padding-right:4px;
+			padding-bottom:1px;
+		}
+		
+		.actionButton2 {
+			font-size: 15px;
+			padding-right:4px;
+			padding-left:0px;
+			padding-bottom:1px;
+		}
+		
+		.actionButton3 {
+			font-size: 15px;
+		}
+	}
+	
+	@media screen and (min-width: 1200px)
+	{
+		.settings-table th {
+			font-size: 1.4em !important;
+		}
+		
+		.settings-table td {
+			font-size: 1.4em !important;
+		}
+		
+		.progress span {
+			font-size: 1.5em;
+		}
+		
+		.actionButton1 {
+			font-size: 19px;
+			padding-right:5%;
+			padding-bottom:3px;
+			
+		}
+		
+		.actionButton2 {
+			font-size: 19px;
+			padding-right:5%;
+			padding-left:0px;
+			padding-bottom:3px;
+		}
+		
+		.actionButton3 {
+			font-size: 19px;
+		}
+	}
+	
+	.btn-danger:hover {
+		color: black;
+	}
+	
+	.btn:focus {
+		color: black;
+	}
+
+</style>
+
+<script>
+	
+	$(document).ready(function()
+	{
+		$(".settings-table th").addClass("col-xs-2");
+		$(".settings-table th:first-child").removeClass("col-xs-2");
+		$(".settings-table th:first-child").addClass("col-xs-1");
+		$(".settings-table th:nth-child(2)").removeClass("col-xs-2");
+		$(".settings-table th:nth-child(2)").addClass("col-xs-1");
+		$(".settings-table th:last-child").removeClass("col-xs-2");
+		$(".settings-table th:last-child").addClass("col-xs-1");
+		
+	});
+	
+
+  		function confirmActive(Disabled, fieldName) 
+        {
+
+            if(Disabled == "false")
+            {
+            return confirm("Are you sure you would like to disable automatic population for the " + fieldName + " field?");
+            }
+            
+            else 
+            {
+            return confirm("Are you sure you would like to activate automatic population for the " + fieldName + " field?");
+            }
+        
+        }
+        
+</script>	
+
+<div class="slds-grid--frame" role="main">
+		        
+		<c:LH_Nav_Bar />
+		
+		<center>
+		    <apex:form styleClass="col_15" rendered="{!isSandbox}" id="upgradeMessage">
+		    <div id="updateBox">
+		    <div class="message" style="text-align:center">
+		    	<font size="3">
+		    	Please note: The free version of Lookup Helper allows for two Lookup Helper settings in production environments.<br/>  
+		        Please visit <a href="http://www.passagetechnology.com/lookup-helper-order">our upgrade page</a> 
+		        for more information. <br/>
+		        </font> 
+		    </div>
+		    </div>
+		    </apex:form>
+		</center>
+		
+		<script>
+        document.getElementById('allSettings').className = "active";
+        </script>
+        
+<apex:form >
+	<div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Lookup Helper Settings</h3>
+            </div>
+					<apex:pageblock >
+					<center>
+	           			<apex:commandButton value="Create Lookup Helper Setting" disabled="{!IF(settingCount >= settingLimit && settingLimit != -1, true, false)}" action="{!createNewSetting}"/>
+	            	</center>
+	            	<br/>
+					<h6>
+										<apex:pageBlockTable id="filtercon" value="{! settings }" var="item" styleClass="table table-responsive table-striped table-bordered settings-table" columnswidth="100px,50px,130px,100px,100px,150px,100px,75px,50px,">
+						                    <apex:column style="text-align:center; padding-left:0px; padding-right:0px;">
+						                        <apex:facet name="header">Action</apex:facet>
+						                        <div class="action" style="padding-left:0px; padding-right:0px">
+						                        	<div class="actionButton1" style="display: inline-block;">
+							                        	<apex:commandLink reRender="" action="{!runSetting}">
+								                        	<apex:param name="setting" value="{! item.Id }"/>
+								                        	<span class="glyphicon glyphicon-play" title="Run" aria-hidden="true" style="color:green"></span>
+								                        </apex:commandLink>
+						                        	</div>
+						                        	
+						                        	<div class="actionButton2" style="display: inline-block;">
+						                        		<apex:outputLink value="/apex/LH_New_Setting?s={!item.Id}">
+						                        			<span class="glyphicon glyphicon-pencil" title="Edit" aria-hidden="true" style="color:orange"></span>
+						                        		</apex:outputLink>
+													</div>
+													
+						                        	<div class="actionButton3" style="display: inline-block;">
+						                        		<apex:commandLink reRender="" action="{!deleteSetting}">
+															<apex:param name="setting" value="{! item.Id }"/>
+								                        	<span class="glyphicon glyphicon-trash" title="Delete" aria-hidden="true" style="color:black"></span>
+								                        </apex:commandLink>
+						                        	</div>
+						                        </div>
+
+						                    </apex:column>
+
+						                    <apex:column style="text-align:center">
+						                    	<apex:facet name="header">Realtime</apex:facet>
+						                    	
+						                    	<apex:repeat value="{!realtimeInfo}" var="realtime">
+						                    	<apex:outputText value="Yes" rendered="{!IF(realtime.settingId == item.Id, true, false)}"/>
+						                    	</apex:repeat>
+						                    	
+						                    </apex:column>
+
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                        <apex:facet name="header">
+						                        	Setting Name
+						                        </apex:facet>
+						                  	 	{!item.Name}
+						                    </apex:column>
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                        <apex:facet name="header">
+						                        	Parent Object
+						                        </apex:facet>
+						                        {!item.LH__Parent_Object__c}
+						                    </apex:column>
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                        <apex:facet name="header">
+						                        	Child Object
+						                        </apex:facet>
+						                        {!item.LH__Child_Object__c}
+						                    </apex:column>
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                        <apex:facet name="header">
+						                        	Lookup Field Being Updated
+						                        </apex:facet>
+						                        {!item.LH__Lookup_Field__c}
+						                    </apex:column>
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                        <apex:facet name="header">
+						                        	Lookup Source
+						                        </apex:facet>
+						                    	{!item.LH__Lookup_Source__c}
+						                    </apex:column>
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;">
+						                    	<apex:facet name="header">
+						                        	Run Results
+						                        </apex:facet>
+												<apex:outputpanel rendered="{!IF(AND(OR(item.LH__Error_Count__c != 0, item.LH__Records_Created__c != 0), item.LH__Error_Count__c != null, item.LH__Records_Created__c != null), true, false)}">
+													<a id="metrics" tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Lookup Helper Setting Metrics" data-placement="left" data-content="<div style='text-decoration: underline; color: blue; text-align: center'><a href='/{!item.Id}'>{!item.Error_Count__c} error(s).</a><br/><a href='/{!item.Id}'>{!item.Records_Created__c} record(s) created.</a></div>">Show</a>
+												</apex:outputpanel>
+												<script>
+													$("[data-toggle=popover]").popover({html:true});
+												</script>																		                    	
+						                    </apex:column> 
+						                    
+						                    <apex:column style="text-align:center; padding-top:0px; padding-bottom:0px;" >
+						                    	<apex:facet name="header">
+						                    		Disabled
+						                    	</apex:facet>						                    	
+						                    	<apex:commandLink onClick="if (!confirmActive('{!item.LH__Disabled__c}', '{!item.LH__Lookup_Field__c}')) return false;" action="{!setActive}"> 			                    	
+						                    		<apex:inputCheckBox value="{!item.LH__Disabled__c}" id="activeCheckBox"/>
+						                    		<apex:param name="LookupId" value="{!item.name}"/> 
+						                    	</apex:commandLink>
+						                    </apex:column>
+						                </apex:pageBlockTable>
+						</h6>
+						<center>
+							<b>
+								<apex:outputPanel rendered="{!settingCount == 0}">
+								<font color="red"><apex:outputText value="No settings currently exist. Click the button below to create one."/></font>
+								<br/>
+								</apex:outputPanel>
+								<apex:commandButton value="Create Lookup Helper Setting" disabled="{!IF(settingCount >= settingLimit && settingLimit != -1, true, false)}" action="{!createNewSetting}"/>
+							</b>
+						</center>       
+					</apex:pageblock>
+						
+					<apex:outputPanel rendered="{!hasSettingLimit}">
+						<center id="progressGroup">
+							<div class="col-sm-3"></div>
+							<div class="col-sm-6" style="padding:10px">
+								<div class="progress" style="height:25px;">
+									<div class="progress-bar" role="progressbar" aria-valuenow="{!UsePercentage}" aria-valuemin="0" aria-valuemax="100" style="width: {!UsePercentage}%">
+										<span style="font-weight: bold;">{!SettingCount} of {!settingLimit} Settings Created</span>
+									</div>
+									<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{!RemainingPercentage}" aria-valuemin="0" aria-valuemax="100" style="width:{!RemainingPercentage}%">
+										<span style="font-weight: bold;">{!RemainingSettingCount} Setting(s) Available</span>
+									</div>
+								</div>
+								<font style="font-size:18px;">
+								<apex:outputLink onclick="window.open('http://www.passagetechnology.com/lookup-helper-order')">Click here </apex:outputLink> to increase the number of settings you may create.
+								</font>
+							</div>
+						</center>
+					</apex:outputPanel>
+				</div>
+			</div>
+			</div> <!-- End of row div -->
+
+</apex:form>
+</div>
+
+</apex:page>

@@ -1,0 +1,924 @@
+<apex:page controller="LH.LH_New_Setting_Controller" sidebar="false"> 
+    <apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" />     
+    
+    <script>
+/*    
+    var i = 0;    
+        function rerender(target)
+        {
+            var targetDiv = document.getElementById(target);
+            targetDiv.style.display="block";
+            
+            document.getElementById('custom').style.display="none";
+            document.getElementById('standard').style.display="none";
+         
+        }
+
+        
+        function displayCriteria()
+        {
+            
+            var targetDiv;
+            
+            if(type == "Categorize by:")
+            {
+                targetDiv = document.getElementById("categorizeBy");
+            }
+            else
+            {
+                targetDiv = document.getElementById(target);
+            }
+            targetDiv.style.display="block";
+            
+            alert("type is equal to " + type);
+        }
+
+        
+        function hideAddButton(buttonName){
+            var displayDiv;
+            var hideDiv;
+            hideDiv= document.getElementById(buttonName);
+            console.log(buttonName);
+            hideDiv.style.display="none";
+            
+            if(buttonName.indexOf("1") > -1){
+                displayDiv = document.getElementById("criteria2");
+                displayDiv.style.display="block";
+                
+                displayDiv = document.getElementById("add2");
+                displayDiv.style.display="";
+            }
+            else if(buttonName.indexOf("2") > -1){
+            }
+            else if(buttonName.indexOf("3") > -1){
+            }
+        
+        }
+        
+
+        function renderDiv(selectOption){
+            if(selectOption.options[selectOption.selectedIndex].value != ''){
+                var src = selectOption.options[selectOption.selectedIndex].value;
+                
+                if(src == 'standard'){
+                    document.getElementById('custom').style.display="none";
+                }
+                else{
+                    document.getElementById('standard').style.display="none";
+                }
+                
+                var targetDiv = document.getElementById(src);
+                targetDiv.style.display="block";
+            }
+            else{
+            document.getElementById('custom').style.display="none";
+            document.getElementById('standard').style.display="none";
+            }
+        }
+        
+        function inputLimiter(e) {
+            var AllowableCharacters = ' ANDORandor0123456789()';
+            var k = document.all?parseInt(e.keyCode): parseInt(e.which);
+            
+            if (k!=13 && k!=8 && k!=0){
+                if ((e.ctrlKey==false) && (e.altKey==false)) {
+                    return (AllowableCharacters.indexOf(String.fromCharCode(k))!=-1);
+            } else {
+                return true;
+            }
+            } else {
+               return true;
+            }
+    }
+*/          
+    </script>
+    
+    <head>
+
+    <title>Create New Lookup Helper Setting</title>
+      
+    <!-- custom styles from bootstrap template them, theme.css, this file is located here: http://getbootstrap.com/examples/theme/theme.css ; needs to be packaged as files must be served via HTTPS-->
+     <style type="text/css">
+     
+     	*{font-family:SalesforceSans-Regular;}
+     	
+     	.panel-primary > .panel-heading {
+			background-color: #16325c;
+		}
+     	
+        body {
+            padding-top: 0px;
+            padding-bottom: 30px;
+        }
+        
+        .theme-dropdown .dropdown-menu {
+            position: static;
+            display: block;
+            margin-bottom: 20px;
+        }
+    
+        .theme-showcase > p > .btn {
+            margin: 5px 0;
+        }
+    
+        .theme-showcase .navbar .container {
+            width: auto;
+        }
+        
+        #workingDiv {
+        	width: 100%;
+        	height: 100%;
+        	text-align: center;
+        	background-color: rgba(0,0,0,0.4);
+        	
+        	position: fixed;
+        	top: 0%;
+        	left: 0%;
+        	z-index: 3;
+        }
+        
+        #innerWorkingDiv {
+        	width: 40vw;
+        	background-color: white;
+        	border-radius: 15px;
+        	margin-left:auto;
+        	margin-right:auto;
+        	
+		    position: relative;
+		    top: 40%;
+        }
+        
+        #innerWorkingDiv h3 {
+        	display:inline-block; 
+        	margin: 30px 0px
+        }
+
+
+		.popover {
+			max-width: 800px;
+			min-width: 700px ! important;
+    		width: auto;
+    		text-align: center;
+		}
+		.popover-title {
+			width: auto;
+	    	background: #337ab7;
+	    	font-weight: bold;
+	    	color: white;
+		}
+		
+		@media(max-width: 992px)
+		{
+			h4 {
+				font-size: 14px;
+			}
+		}
+
+    </style>
+    
+  </head>
+<body role="document">
+	<div class="slds-grid--frame" role="main">
+    <div class="container theme-showcase">
+        <c:LH_Nav_Bar />
+
+      <apex:form >
+
+      
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Select Child Object</h3>
+              <h4 style="color:tan;">
+                &nbsp;<span class="glyphicon glyphicon-info-sign" style="float:right" title="Select the child object you would like to create or maintain a relationship on."/>
+              </h4>
+            </div>
+            
+            <div class="panel-body">
+                <center>
+                <br/>
+                    <h3>
+                    <apex:actionRegion >
+	                	<apex:selectList value="{!selectedChildObject}" multiselect="false" size="1" style="width: 80%;">
+	                    	<apex:actionSupport event="onchange" action="{!retrieveChildRelationships}" rerender="step2, step3, step4" status="working"/>
+	                    	<apex:selectOptions value="{!ChildObjects}"/>
+	                    </apex:selectList>
+                    </apex:actionRegion>
+                    </h3>
+                    <br/>
+                    <br/> 
+                </center>
+            </div>
+            <apex:outputPanel id="out">
+                <apex:actionstatus id="status" startText="testing...">
+                </apex:actionstatus>
+            </apex:outputPanel>
+          </div>
+        </div><!-- /.col-sm-4 -->
+        
+        <apex:outputPanel id="step2">
+	          		
+			<apex:outputPanel rendered="{! NOT(ISBLANK(selectedChildObject))}">
+				<div id="relation" class="col-sm-6">
+			    	<div class="panel panel-primary">
+			            <div class="panel-heading">
+			              <h3 class="panel-title">Lookup Field on {!ChildObjLabel} to Update</h3>
+			              <h4 style="color:tan;">
+			                &nbsp;<span class="glyphicon glyphicon-info-sign" style="float:right" title="Select the lookup field that will link each child {!cleanChildObjName} record to its parent record. If you do not see the lookup field, then it may already be used in another Lookup Helper setting, or a new lookup field may need to be created."/>
+			              </h4> 
+			            </div>
+			            <div class="panel-body">
+			            	<apex:outputPanel rendered="{!AND(NOT(ISBLANK(selectedChildObject)), ISBLANK(createLookup)) }">
+			            		<br/>
+			            		<apex:actionRegion >
+			            			<center>
+			            				<apex:selectRadio value="{!createLookup}" layout="pageDirection" rendered="{!NOT(ISBLANK(selectedChildObject))}">   
+			            					<apex:actionSupport event="onchange" rerender="lookup, categorize, filterType, step2, step3, step4, standardFields" status="working"/>
+			            					<apex:selectOptions value="{!relationshipOptions}"/>
+			            				</apex:selectRadio>
+			           				</center>
+			            		</apex:actionRegion> 
+			            	</apex:outputPanel>
+			            		            	
+			            	<apex:outputPanel rendered="{! AND( NOT(ISBLANK(selectedChildObject)), createLookup == 'maintain')}">
+      							<center>
+									<br/>
+		    						<h3> 
+		 								<apex:actionRegion >
+		      								<apex:selectList value="{!childRelationship}" multiselect="false" size="1" style="width: 80%;" rendered="{!AND(NOT(ISBLANK(selectedChildObject)), NOT(childRelationshipListIsEmpty))}">
+			     		   						<apex:actionSupport event="onchange" action="{!clearAllCategoryFields}" rerender="categorize, filterType, step3, step4, standardFields" status="working"/>
+				  		  	    				<apex:selectOptions value="{!ChildRelationships}"/>
+											</apex:selectList>
+			 							</apex:actionRegion>
+	           		               
+	      	   							<apex:selectList multiselect="false" size="1" style="width: 80%;" rendered="{!childRelationshipListIsEmpty}" disabled="true">
+			    							<apex:selectOption itemValue="No relationships available" itemLabel="No avialable lookup fields."/>
+			   							</apex:selectList>              
+									</h3> 
+									<br/>
+									<br/>                  
+								</center>
+      						</apex:outputPanel>	
+      						
+      						<apex:outputPanel rendered="{! AND( NOT(ISBLANK(selectedChildObject)), createLookup == 'create', ISBLANK(parentObjectName), HasRemoteSite)}">
+      							<center>
+                					<br/>
+                    				<h3> 
+                    					<apex:actionRegion >
+	                						<apex:selectList value="{!parentObjectName}" multiselect="false" size="1" style="width: 80%;">
+	                    						<apex:actionSupport action="{!clearAllCategoryFields}" event="onchange" rerender="step2, step3, step4" status="working"/>
+	                    						<apex:selectOptions value="{!parentObjects}"/>
+	                    					</apex:selectList>
+                   						</apex:actionRegion>
+                    				</h3>
+                   					<br/>
+                    				<br/> 
+                				</center>
+      						</apex:outputPanel>
+      						<apex:outputPanel rendered="{! AND( NOT(ISBLANK(selectedChildObject)), createLookup == 'create', ISBLANK(parentObjectName), NOT(HasRemoteSite))}">
+	      									   	<center>
+	      									   		<font style="color:red; font-size:14px">
+	      									   			<br/>
+	      									   			<a href='/apex/LH_RemoteSitePage'>Error: A Remote Site Setting must be created to create a new field. Please click here to create a Remote Site.</a>
+														<br/><br/>
+	      									   		</font>
+	      									   	</center> 	
+	      					</apex:outputPanel>		
+      						      						
+      						<apex:outputPanel rendered="{! AND( NOT(ISBLANK(selectedChildObject)), createLookup == 'create', NOT(ISBLANK(parentObjectName)) )}">
+      								<center>
+      									<br/>
+      									<h5>      								
+   										<apex:outputLabel value="Lookup Field Name"/>
+   										&nbsp;
+   										<apex:inputText value="{!newLookupName}" />      							
+   										&nbsp;
+   										
+   									   <apex:commandButton status="working" value="Submit" action="{!checkValidLookupName}" rerender="categorize, filterType, invalidField, step2, step3, step4, standardFields, FLS"/>        									   
+   									   <apex:outputPanel id="FLS" rendered="{!NOT(invalidFieldName)}"> 
+   									   		<center>
+   									   			<font style="color:blue; font-size:14px">
+   									   				Please Note: Field level security, and page layouts will need to be adjusted to make the new lookup field visible.
+   									   			</font>
+   									   		</center>   										
+   										</apex:outputPanel> 
+   									   	<apex:outputPanel id="invalidField" rendered="{!invalidFieldName}"> 
+   									   		<center>
+   									   			<font style="color:red; font-size:14px">
+   									   				Error: The custom field name you provided "{!newLookupName}" on object {!selectedChildObject} can only contain alphanumeric characters, must begin with a letter, cannot end with an underscore or contain two consecutive underscore characters, and must be unique across all {!selectedChildObject} fields
+   									   			</font>
+   									   		</center>   										
+   										</apex:outputPanel> 
+      														
+      									</h5>
+      									
+      								</center>
+			            	</apex:outputPanel>			            	
+			           	</div>
+			    	</div>
+				</div>
+			</apex:outputPanel>      			           
+   		</apex:outputPanel>      	
+      </div>			                
+			           
+			           
+      
+      <apex:outputPanel id="step3">
+		      <apex:outputPanel rendered="{!AND(NOT(ISBLANK(childRelationship)), NOT(ISBLANK(selectedChildObject)))}">
+		      <div id="categorize" class="row">
+		            <div class="col-sm-12">
+		                  <div class="panel panel-primary">
+		                        <div class="panel-heading" style="height:38px">
+		                            <center><h3 class="panel-title">Select Lookup Helper Setting Type:</h3></center>
+		                            <h4 style="color:tan;">
+		                            </h4>                   
+		                        </div>
+		                        
+		                        <div class="panel-body">
+		                        <!------------------- Criteria Decloration 1 ----------------------->
+		                                
+		                            <div class="row table-bordered" style="padding: 15px;">
+		                                    <center>
+		                                    <h1 style="color:red">
+		                                        <apex:actionStatus id="statusMessage2" startText="(Refreshing)" stopText="" styleClass="caption col col_1" style="font-Color:red"/>
+		                                    </h1>
+		                                    </center>
+		                                    
+		                                    <div id="standard">
+		                                            <center>
+		                                            <h4><b>
+		                                            <apex:actionRegion >
+		                                            Lookup Helper Setting Type:
+		                                            <br/>
+		                                            <apex:selectList id="SettingType" style="text-align: center;" value="{!settingType}" size="1">
+		                                            	<apex:actionSupport event="onchange" action="{!clearMatchingFields}" rerender="standardFields, categoryCreate, requiredFields, matchFields, step4" status="working"/>
+		                                                <apex:selectOptions value="{!settingTypes}"/>
+		                                            </apex:selectList>									   
+		                                            </apex:actionRegion>
+		                                            <a id="typeInfo" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" title="Lookup Helper Setting Types" data-placement="top"><span class="glyphicon glyphicon-info-sign" style="color:tan;"/></a>
+		                                            <script>
+														var img = '<apex:image height="40%" width="40%" url="{!URLFOR($Resource.LH__LHCategorySettingType)}" /><apex:image height="59%" width="59%" url="{!URLFOR($Resource.LH__LHMatchSettingType)}" />';
+														$("[data-toggle=popover]").popover({content: img, html:true});
+													</script>
+		                                            
+		                                            <br/><br/>
+
+		                                            <apex:outputPanel id="standardFields">            
+		                                            <apex:outputPanel rendered="{!OR(IF(settingType == 'category', true, false), IF(cleanChildObjName == cleanParentObjName, true, false))}">        
+		                                            <div class="row">
+		                                                <div id="categorizeBy">
+		                                                    <center>
+		                                                    <apex:actionRegion > 
+		                                                        <apex:outputPanel id="reqCat" style="margin-right: 15px;">
+		                                                            <apex:outputPanel rendered="{!AND(selectedCategoryField == '', settingType == 'category')}">
+		                                                                <span class="glyphicon glyphicon-flag" title="Field is required." style="color:red"/>
+		                                                            </apex:outputPanel>
+		                                                        </apex:outputPanel>
+		                                                        
+		                                                        
+		                                                        <apex:selectList value="{!selectedCategoryField}" multiselect="false" size="1" style="width:30%;" rendered="{!AND(NOT(ISBLANK(childRelationship)), NOT(ISBLANK(settingType)))}">
+		                                                            <apex:actionSupport event="onchange" action="{!clearRelatedObjField}" rerender="step4, categoryCreate, reqCat, relatedObjectFields, requiredFields" status="working"/>
+		                                                            <apex:selectOptions value="{!sourceFieldList}"/>
+		                                                        </apex:selectList>
+		                                                        
+		                                                        <apex:outputPanel id="relatedObjectFields">
+		                                                        <apex:outputPanel rendered="{!IF(CONTAINS(selectedCategoryField, '.'), true, false)}">
+		                                                            <apex:selectList value="{!selectedRelatedObjectField}" multiselect="false" size="1" style="width:30%;">
+		                                                            <apex:actionSupport event="onchange" rerender="step4, categoryCreate, reqCat" status="working"/>
+		                                                            <apex:selectOptions value="{!RelatedObjectFields}"/>
+		                                                            </apex:selectList>
+		                                                        </apex:outputPanel>
+		                                                        </apex:outputPanel>
+		                                                        </apex:actionRegion>
+		                                                    <p/>
+		                                                    </center>
+		                                                </div>
+		                                            </div>
+		                                            
+		                                            <div class="row" id="criteria1">    
+		                                                <div>
+		                                                <center>
+		                                                <apex:outputPanel id="categoryCreate">
+		                                                <apex:outputPanel rendered="{!AND(NOT(ISBLANK(selectedCategoryField)), IF(settingType == 'category', true, false), parentObjectName != 'user', parentObjectName != 'group', OR(NOT(Contains(selectedCategoryField, '.')), NOT(ISBLANK(selectedRelatedObjectField))))}">
+		                                                    <h5 style="color:tan;">
+		                                                    <span class="glyphicon glyphicon-info-sign" title="Select this option to create new {!cleanParentObjName} records if a record for the category name does not exist. Any new records that do not meet validation rules will not be created."/>
+		                                                    </h5>
+		                                                    <label>Create new category records? &nbsp;</label>
+		                                                    <apex:actionRegion >
+		                                                    <apex:inputCheckbox value="{!createNewCategory}">
+		                                                    <apex:actionSupport event="onchange" rerender="requiredFields" status="working"/>
+		                                                    </apex:inputCheckbox>
+		                                                    </apex:actionRegion>
+		                                                </apex:outputPanel>
+		                                                </apex:outputPanel>
+		                                                </center>
+		                                                </div>
+		                                            </div>   
+		                                            
+													</apex:outputPanel>
+													</apex:outputPanel>
+													
+<!-- ----- -->													
+													<apex:outputPanel id="matchFields">
+													<apex:outputPanel rendered="{!IF(settingType == 'match', true, false)}">
+
+													<div class="panel panel-primary">
+		                                                <div class="panel-heading" style="height:38px">
+		                            								<h3 class="panel-title">Select Fields On {!cleanChildObjName} And {!cleanParentObjName} To Match:</h3>
+		                            								<h4 style="color:tan;">
+		                                								&nbsp;<span class="glyphicon glyphicon-info-sign" style="float:right" title="Lookup Helper will relate the child {!cleanChildObjName} record to the parent {!cleanParentObjName} record with the same name as the value in the specified field."/>
+		                            								</h4>                   
+		                        								</div>
+													<div class="panel-body">
+													<div class="col-xs-5">
+													Child {!cleanChildObjName} field:<br/>
+													<apex:actionRegion >
+													<apex:outputPanel id="reqflag1" style="margin-right: 15px;">
+		                                            	<apex:outputPanel rendered="{!ISBLANK(selectedCategoryField)}">
+		                                                	<span class="glyphicon glyphicon-flag" title="Field is required." style="color:red"/>
+		                                                </apex:outputPanel>
+		                                            </apex:outputPanel>
+													
+													<apex:selectList value="{!selectedCategoryField}" multiselect="false" size="1" rendered="{!NOT(ISBLANK(childRelationship))}" style="width: 85%; text-align: center;">
+		                                            	<apex:actionSupport event="onchange" rerender="parentFieldToMatch, reqflag1, step4" status="working"/>
+		                                                <apex:selectOptions value="{!sourceFieldList}"/>
+		                                            </apex:selectList>
+		                                            </apex:actionRegion>
+													</div>
+													
+													<apex:outputPanel id="parentFieldToMatch">
+													<div class="col-xs-2">
+														<br/>
+														MATCH TO
+													</div>
+													
+													<div class="col-xs-5">
+													Parent {!cleanParentObjName} field:<br/>
+													<apex:actionRegion >
+													<apex:outputPanel id="reqflag2" style="margin-right: 15px;">
+		                                            	<apex:outputPanel rendered="{!ISBLANK(selectedRelatedObjectField)}">
+		                                                	<span class="glyphicon glyphicon-flag" title="Field is required." style="color:red"/>
+		                                                </apex:outputPanel>
+		                                            </apex:outputPanel>
+													
+													<apex:selectList value="{!selectedRelatedObjectField}" multiselect="false" size="1" style="width: 85%; text-align: center;">
+		                                               <apex:actionSupport event="onchange" rerender="reqflag2, step4" status="working"/>
+		                                               <apex:selectOptions value="{!RelatedObjectFields}"/>
+		                                            </apex:selectList>
+		                                            </apex:actionRegion>
+		                                            </div>
+		                                            
+		                                            <br/>
+		                                            <br/>
+		                                            <center><font style="color:red; font-size:12px">Please Note: If you have large sets of data (over 100,000 {!cleanParentObjName} or {!cleanChildObjName} records), it is best to only select indexed fields to match.</font></center>
+		                                            <center><font style="color:red; font-size:12px">A good way to apply an index to a field is to make the field an external Id.</font></center>
+															                                            
+		                                            </apex:outputPanel>
+		                                            </div>
+		                                            </div>
+		                                            	
+													</apex:outputPanel>
+													</apex:outputPanel>
+													
+<!-- ----- -->													
+													
+		                                            <apex:outputPanel id="requiredFields">
+		                                            <apex:outputPanel rendered="{!IF(createNewCategory = true, true, false)}">
+		                                            <br/>
+		                                            <div class="panel panel-primary">
+		                                                <div class="panel-heading" style="height:38px">
+		                                                    <h3 class="panel-title">Populate field values for new <b>{!cleanParentObjName}</b> records created by Lookup Helper (optional):</h3>
+		                                                    <h4 style="color:tan;">
+		                                                        &nbsp;<span class="glyphicon glyphicon-info-sign" style="float:right" title="When creating new records, required field values will need to be populated with a value. Please note: New records created by Lookup Helper will automatically be named using the value in the child records category field (selected above)."/>
+		                                                    </h4>                
+		                                                </div>
+		
+		                                           <div class="panel-body">
+		                                           
+		                                           <div class="col-sm-1" align="right" style="padding: 5;">
+		                                                <h6><label>Field to Populate: </label></h6>
+		                                           </div>
+		                                           
+		                                           <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                <apex:actionRegion >
+		                                                    <apex:selectList id="customFields" style="width: 80%;" value="{!selectedFilterField}" multiselect="false" size="1">
+		                                                        <apex:actionSupport event="onchange" rerender="arrow1, filterCondition, value, fieldValue, arrow2, addCriteria"/>
+		                                                        <apex:selectOptions value="{!ParentFieldList}"/>
+		                                                    </apex:selectList>
+		                                                </apex:actionRegion>
+		                                                
+		                                                <apex:outputPanel id="arrow1">
+		                                                <apex:outputPanel rendered="{!selectedFilterField != ''}">
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 3%"/>
+		                                                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true" style="width: 2%"/>
+		                                                </apex:outputPanel> 
+		                                                </apex:outputPanel> 
+		                                                   
+		                                                </div>
+		                                                
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                <apex:outputPanel id="filterCondition">
+		                                                <apex:outputPanel rendered="{!selectedFilterField != ''}">    
+		                                                        <apex:actionRegion >
+		                                                        <apex:selectList style="width: 80%" value="{!selectedFilterCondition}" multiselect="false" size="1">
+		                                                            <apex:actionSupport event="onchange" rerender="arrow2, value, addCriteria, fieldValue"/>
+		                                                            <apex:selectOptions value="{!FieldLogicOptions}"/>
+		                                                        </apex:selectList>
+		                                                        
+		                                                        </apex:actionRegion>
+		                                                        <apex:outputPanel id="arrow2">
+		                                                        <apex:outputPanel rendered="{!selectedFilterField != ''}">
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 3%"/>
+		                                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true" style="width: 2%"/>
+		                                                        </apex:outputPanel>
+		                                                        </apex:outputPanel>
+		                                                        
+		                                                </apex:outputPanel>
+		                                                </apex:outputPanel> 
+		                                                </div>
+		                                                
+		                                                
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                    <apex:outputPanel id="value">
+		                                                    <apex:outputpanel rendered="{!AND(selectedFilterField != '', NOT(selectedFilterCondition == '->'))}">  
+		                                                    <apex:actionRegion >
+		                                                            <apex:inputText value="{!selectedFilterValue}" style="width: 95%;"/>
+		                                                    </apex:actionRegion>
+		                                                    </apex:outputpanel>
+		                                                    </apex:outputPanel> 
+		                                                </div>
+		                                                  
+		                                                <apex:outputPanel id="fieldValue">
+		                                                <apex:outputpanel rendered="{!AND(selectedFilterField != '', selectedFilterCondition == '->')}">
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                    <apex:actionRegion >
+		                                                    <apex:selectList style="width: 80%" value="{!selectedFilterValue}" multiselect="false" size="1">
+		                                                    	<apex:selectOptions value="{!MappingSourceFieldList}"/>
+		                                                    </apex:selectList>
+		                                                    </apex:actionRegion>
+		                                                </div>
+		                                                </apex:outputpanel>
+		                                                </apex:outputPanel>
+		                                               
+		                                                <div class="col-sm-1" align="center">
+		                                                    <apex:outputpanel id="addCriteria"> 
+		                                                    <apex:commandButton action="{!addCriteria}" value="Add Criteria" rendered="{!selectedFilterField != ''}" rerender="filterTable, filterCondition, value, fieldValue, arrow1, arrow2, customFields" status="working"/>
+		                                                    </apex:outputpanel> 
+		                                                </div>
+		                                                
+		                                               
+		                                            
+		                                            <br/><br/>
+		                                            
+		                                            <apex:outputPanel id="requiredFieldError">
+		                                            <apex:outputPanel rendered="{!requiredFieldValueError}" style="float:right; padding:15px">
+		                                                <font color="red">Please populate all of the required field values below.</font>
+		                                            </apex:outputPanel>
+		                                            </apex:outputPanel>
+		                                            
+		                                            <div class="col-sm-12" >
+		                                                <apex:outputPanel id="filterTable">
+		                                                    <apex:pageBlock rendered="{!IF(requiredFields.size == 0, false, true)}">
+		                                                        <apex:pageBlockTable id="filtercon" value="{! requiredFields }" var="item">
+		                                                            <h6 style="color:red">
+		                                                                <apex:actionStatus id="statusMessage3" startText="(refreshing)" stopText="" styleClass="caption col col_1" style="font-Color:red"/>
+		                                                            </h6>                                                   
+		                                                        
+		                                                            <apex:column style="width:5%">
+		                                                                <apex:facet name="header">Action</apex:facet>
+		                                                                <center>
+		                                                                <apex:actionRegion >
+		                                                                    <apex:outputPanel rendered="{!item.required == 'No'}">
+		                                                                    <apex:commandLink action="{!removeFilter}" reRender="requiredFields, filterTable, filterCon">   
+		                                                                      <apex:param name="filterId" value="{! item.field }"/>
+		                                                                      <span class="glyphicon glyphicon-remove" title="Delete" aria-hidden="true" style="color:red"></span>
+		                                                                      </apex:commandLink>
+		                                                                      </apex:outputPanel>
+		                                                                  </apex:actionRegion>                                                         
+		                                                                </center>
+		                                                            </apex:column>
+		                                                            <apex:column >
+		                                                                <apex:facet name="header">
+		                                                                    {!cleanParentObjName} Field
+		                                                                </apex:facet>
+		                                                                {! item.field }
+		                                                            </apex:column>
+		                                                            <apex:column >
+		                                                                <apex:facet name="header">
+		                                                                    Value to populate in field
+		                                                                </apex:facet>
+		                                                                <apex:outputPanel >
+		                                                                <apex:outputPanel rendered="{!AND(item.value == '', item.required == 'Yes')}">
+		                                                                    <span class="glyphicon glyphicon-flag" title="Field value is required." style="color:red"/>
+		                                                                </apex:outputPanel>
+		                                                                
+		                                                                {! item.value }
+		                                                                
+		                                                                <apex:actionregion >
+		                                                                     <apex:commandLink style="float:right" reRender="requiredFields, customFields, filterCondition, value, arrow1, arrow2, addCriteria" action="{!editFilter}" immediate="true">
+		                                                                        <apex:param name="filterId" value="{! item.field }"/>
+		                                                                        <span class="glyphicon glyphicon-pencil" title="Edit" aria-hidden="true" style="color:orange"/>
+		                                                                    </apex:commandLink>
+		                                                                </apex:actionregion>
+		                                                                
+		                                                                </apex:outputPanel> 
+		                                                            </apex:column>
+		                                                        </apex:pageBlockTable>
+		                                                    </apex:pageBlock>
+		                                                </apex:outputPanel>
+		                                            </div>
+		                                           
+		                                            </div>
+		
+		                                            </div>
+		                                            
+		                                            </apex:outputPanel>
+		                                            </apex:outputPanel>                                         
+		                                            
+		                                            </b></h4>
+		                                            </center>
+		                                            </div>
+		                                    
+		<!--                                
+		                                    <center>
+		                                        <h3>
+		                                        <apex:outputpanel id="filterType">
+		                                        <apex:actionRegion >
+		                                        <apex:selectList value="{!filterType}" onchange="renderDiv(this)" rendered="{!hasSelectedRelationshipField}" size="1" multiselect="false">
+		                                        <apex:actionsupport event="onchange" action="{!updateFilterType}" rerender="criteriaEdit1, custom, standard, standardFields, customFields, save, saveandrun"/>
+		                                        <apex:selectOptions value="{!categorizeOptions}"/>
+		                                        </apex:selectList>
+		                                        </apex:actionRegion>
+		                                        </apex:outputpanel>                                 
+		                                            <br/><br/>
+		                                        </h3>
+		                                    </center>
+		                                          
+		                                        <div class="row" id="criteriaEdit1">
+		-->                                         
+		                                        <!--------------------------------- Custom Criteria --------------------------------->
+		<!--  
+		                                            <div class="row" id="custom" style="display:none;">
+		                                                
+		                                                <script>
+		                                                    if('{!JSENCODE(filterType)}' == 'custom'){
+		                                                        document.getElementById('custom').style.display="block";
+		                                                    }
+		                                                </script>
+		                                                
+		                                                <h4><b>
+		                                                
+		                                                <div class="col-sm-1" align="right" style="padding: 5;">
+		                                                <h3><label>IF: </label></h3>
+		                                                </div>
+		                                                
+		                                                
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                <apex:actionRegion >
+		                                                    <apex:selectList id="customFields" style="width: 80%;" value="{!selectedFilterField}" multiselect="false" size="1">
+		                                                        <apex:actionSupport event="onchange" rerender="arrow1, filterCondition"/>
+		                                                        <apex:selectOptions value="{!sourceFieldList}"/>
+		                                                    </apex:selectList>
+		                                                </apex:actionRegion>
+		                                                
+		                                                <apex:outputPanel id="arrow1">
+		                                                <apex:outputPanel rendered="{!selectedFilterField != ''}">
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                    <span class="glyphicon glyphicon-minus" style="width: 3%"/>
+		                                                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true" style="width: 2%"/>
+		                                                </apex:outputPanel> 
+		                                                </apex:outputPanel> 
+		                                                   
+		                                                </div>
+		                                                
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                                <apex:outputPanel id="filterCondition">
+		                                                <apex:outputPanel rendered="{!selectedFilterField != ''}">    
+		                                                        <apex:actionRegion >
+		                                                        <apex:selectList style="width: 80%" value="{!selectedFilterCondition}" multiselect="false" size="1">
+		                                                            <apex:actionSupport event="onchange" rerender="arrow2, value, addCriteria"/>
+		                                                            <apex:selectOptions value="{!LogicOptions}"/>
+		                                                        </apex:selectList>
+		                                                        
+		                                                        </apex:actionRegion>
+		                                                        <apex:outputPanel id="arrow2">
+		                                                        <apex:outputPanel rendered="{!NOT(ISBLANK(selectedFilterCondition))}">
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 2%"/>
+		                                                        <span class="glyphicon glyphicon-minus" style="width: 3%"/>
+		                                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true" style="width: 2%"/>
+		                                                        </apex:outputPanel>
+		                                                        </apex:outputPanel>
+		                                                        
+		                                                </apex:outputPanel>
+		                                                </apex:outputPanel> 
+		                                                </div>
+		                                                
+		                                                
+		                                                <div class="col-sm-3" align="left" style="padding: 0;">
+		                                            <apex:outputPanel id="value">
+		                                            <apex:outputpanel rendered="{!NOT(ISBLANK(selectedFilterCondition))}">  
+		                                                    <apex:actionRegion >
+		                                                    <apex:inputText value="{!selectedFilterValue}" style="width: 95%;"/>
+		                                                    </apex:actionRegion>
+		                                            </apex:outputpanel>
+		                                            </apex:outputPanel> 
+		                                                </div>
+		                                                
+		                                                <div class="col-sm-1" align="center">
+		                                                <apex:outputpanel id="addCriteria"> 
+		                                                <apex:actionRegion >
+		                                                <apex:commandButton action="{!addCriteria}" value="Add Criteria" status="statusMessage3" rendered="{!NOT(ISBLANK(selectedFilterCondition))}"/>
+		                                                </apex:actionRegion>
+		                                                </apex:outputpanel> 
+		                                                </div>
+		                                                
+		                                                </b></h4>
+		                                            
+		                                            <br/><br/>
+		                                            
+		                                            <div class="col-sm-12" >
+		                                            <apex:outputPanel id="filterTable">
+		                                            <apex:pageBlock >
+		                                            <apex:pageBlockTable id="filtercon" value="{! filters }" var="item">
+		                                            <h6 style="color:red">
+		                                            <apex:actionStatus id="statusMessage3" startText="(refreshing)" stopText="" styleClass="caption col col_1" style="font-Color:red"/>
+		                                            </h6>
+		                                                    <apex:column style="width:5%">
+		                                                        <apex:facet name="header">Action</apex:facet>
+		                                                        <center>
+		                                                        <apex:actionRegion >
+		                                                            <apex:commandLink action="{!removeFilter}" reRender="filterTable, filterCon">   
+		                                                              <apex:param name="filterId" value="{! item.Id }"/>
+		                                                              <span class="glyphicon glyphicon-remove" title="Delete" aria-hidden="true" style="color:red"></span>
+		                                                              </apex:commandLink>
+		                                                          </apex:actionRegion>
+		                                                          &nbsp;
+		                                                         <apex:actionregion >
+		                                                             <apex:commandLink reRender="custom, customFields, filterCondition, value, arrow1, arrow2, addCriteria" action="{!editFilter}" immediate="true">
+		                                                                <apex:param name="filterId" value="{! item.Id }"/>
+		                                                                <span class="glyphicon glyphicon-pencil" title="Edit" aria-hidden="true" style="color:orange"/>
+		                                                            </apex:commandLink>
+		                                                        </apex:actionregion>
+		                                                        </center>
+		                                                    </apex:column>
+		                                                    <apex:column style="width:5%">
+		                                                        <apex:facet name="header">
+		                                                            Filter ID
+		                                                        </apex:facet>
+		                                                        <center>
+		                                                        {! item.Id }
+		                                                        </center>
+		                                                    </apex:column>
+		                                                    <apex:column >
+		                                                        <apex:facet name="header">
+		                                                            Filtered Field
+		                                                        </apex:facet>
+		                                                        {! item.field }
+		                                                    </apex:column>
+		                                                    <apex:column >
+		                                                        <apex:facet name="header">
+		                                                            Operator
+		                                                        </apex:facet>
+		                                                        {! item.condition }
+		                                                    </apex:column>
+		                                                    <apex:column >
+		                                                        <apex:facet name="header">
+		                                                            Value
+		                                                        </apex:facet>
+		                                                        {! item.value }
+		                                                    </apex:column>
+		                                                </apex:pageBlockTable>
+		                                                <br/><br/>
+		                                                <apex:outputPanel id="boolString">
+		                                                <apex:commandButton action="{!changeFilterLogic}" value="Change Filter Logic" rerender="filtercon, boolString, boolLogic, save, saveandrun" status="statusMessage4"/>
+		                                                <apex:inputText value="{!filterLogic}" onkeypress="return inputLimiter(event)" id="boolLogic" style="width: 500px;" /><br />
+		                                                <apex:outputText value="{!invalidMessage}" style="color:red;" rendered="{!showInvalidBoolString}" id="boolStringError" />
+		                                                <h7 style="color:red">
+		                                                <apex:actionStatus id="statusMessage4" startText="(refreshing)" stopText="" styleClass="caption col col_1" style="font-Color:red"/>
+		                                                </h7>
+		                                                </apex:outputPanel>
+		                                                </apex:pageBlock>
+		                                                </apex:outputPanel>
+		                                                </div>
+		                                                
+		                                                <center>
+		                                                <h3><br/>
+		                                                <label>If above criteria is met than relate to: </label> <br/>
+		                                                <apex:inputText value="{!LookupFieldValue}"/> <br/>
+		                                                </h3>
+		                                                <label><font color="red">(Input value must be a valid ID or name of record if you would like to create a relationship.</font></label><br/>
+		                                                <label><font color="red">You may also leave this blank if you would like to remove a relationship.)</font></label>
+		                                                </center> 
+		                                        </div>
+		-->                                     
+		                                            <!-- ----------------------------------------------------------------------------- --> 
+		
+		
+		                                            <!--------------------------------- Field Criteria ---------------------------------->
+		<!-- 
+		                                            <div id="standard" style="display:none;">
+		                                            
+		                                           
+		                                            <script>
+		                                                if('{!JSENCODE(filterType)}' == 'standard'){
+		                                                    document.getElementById('standard').style.display="block";
+		                                                }
+		                                            </script>
+		                                            
+		                                            <h4><b>
+		                                                    
+		                                            <div class="row">
+		                                                <div id="categorizeBy">
+		                                                    <center>
+		                                                    <apex:outputPanel id="standardFields">
+		                                                    <apex:actionRegion >
+		                                                        <apex:selectList value="{!selectedCategoryField}" multiselect="false" size="1" style="width:30%" rendered="{!NOT(ISBLANK(selectedChildObject))}">
+		                                                            <apex:selectOptions value="{!sourceFieldList}"/>
+		                                                        </apex:selectList>
+		                                                        </apex:actionRegion>
+		                                                    </apex:outputPanel>
+		                                                    <p/>
+		                                                    </center>
+		                                                </div>
+		                                            </div>
+		                                            
+		                                            <div class="row" id="criteria1">    
+		                                                <div id="categoryCreate">
+		                                                <center>
+		                                                    <label>Create category if it doesn't already exist? &nbsp;</label>
+		                                                    <apex:actionRegion >
+		                                                    <apex:inputCheckbox value="{!createNewCategory}" />
+		                                                    </apex:actionRegion>
+		                                                </center>
+		                                                </div>
+		                                            </div>
+		                                            
+		                                            </b></h4>
+		                                            </div>
+		-->                                            
+		                                            <!--------------------------------- Field Criteria ---------------------------------->                                      
+		                               
+		                               </div> 
+		                               
+		                               
+		                               
+		                               
+		                            </div>
+		                                        
+		                    </div>
+		            </div>
+		      </div>
+			  </apex:outputPanel>
+      </apex:outputPanel>
+      
+      <apex:outputPanel id="step4">
+      <apex:outputPanel rendered="{!OR(
+      									AND( 
+      										OR(settingType == 'category', ISBLANK(settingType)), 
+      										NOT(ISBLANK(selectedCategoryField)) 
+      									   ), 
+      									AND( settingType == 'match', 
+      										 NOT(ISBLANK(selectedRelatedObjectField)), 
+      										 NOT(ISBLANK(selectedCategoryField)) 
+      									   ) 
+      							      )}">
+    	<div>
+      	<center>
+      	<apex:outputText value="Setting Name (optional)  "/><apex:inputText value="{!settingName}"/><br/><br/>					  
+        <apex:commandButton action="{!saveSetting}" disabled="{!showInvalidBoolString}" value="Save Setting" id="save" rerender="boolStringError, requiredFieldError" status="working"/>
+        <apex:commandButton action="{!saveAndRunSetting}" disabled="{!showInvalidBoolString}" value="Save and Run Setting" id="saveandrun" rerender="boolStringError, requiredFieldError" status="working"/>
+      	<apex:commandButton action="{!doCancel}" value="Cancel"/>
+      	</center>
+      	</div>
+      </apex:outputPanel>
+      </apex:outputPanel>
+      
+      
+      <apex:actionStatus id="working" stopText="" startStyle="color:blue;" styleClass="caption col col_1">
+	      <apex:facet name="start">		  	
+		  	<div id="workingDiv">
+			  <div id="innerWorkingDiv">
+ 		  		<h3>Processing..</h3>
+		  	  </div>
+			</div>
+	      </apex:facet>
+      </apex:actionStatus>
+      
+      
+      </apex:form>
+
+      
+    </div> <!-- /container -->
+    </div>
+  </body>
+</apex:page>

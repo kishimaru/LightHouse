@@ -1,0 +1,46 @@
+<apex:page standardController="Provider__c" extensions="con_ExtensionExternalProvider" tabStyle="Account">
+
+    <style>
+        .txtError { color: #d74c3b; font-weight: bold; height: 30px; font-size: 100%;}
+    </style>
+    
+    <apex:form id="thisForm">
+
+        <apex:pageBlock id="thisPageBlock" title="Organization and Contact" mode="edit">
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveOrgCnt}" value="Save"/>
+                <apex:commandButton action="{!cancelOrgCnt}" value="Cancel" immediate="true" />
+            </apex:pageBlockButtons>
+            
+            <!-- <apex:messages styleClass="txtError" /> -->
+            <apex:pageMessages escape="false" /> <!-- For dupe blocker error messages -->
+
+            <apex:pageBlockSection id="pBlSection1" columns="1" title="Organization Information">                                                                          
+                <apex:inputField value="{!acct.Name}" label="Agency / Business Name"/>
+                <apex:inputField value="{!acct.Acronym__c}" label="Acronym / Abbreviation"/>
+                <apex:inputField value="{!acct.Industry}" />
+                <apex:inputField value="{!acct.Description}" />
+                <apex:inputField value="{!acct.Website}" />
+            </apex:pageBlockSection>                
+                
+            <apex:pageBlockSection id="pBlSection2" columns="1" title="Contact Information">  
+                <apex:inputField value="{!ct.Salutation}" />                                   
+                <apex:inputField value="{!ct.FirstName}" />
+                <apex:inputField value="{!ct.LastName}" />
+                <apex:inputField value="{!ct.Title}" label="Title"/>
+                <apex:inputField value="{!ct.Contact_Notes__c}" />
+                <apex:inputField value="{!acct.Phone}" />                               
+                <apex:inputField value="{!acct.Fax}" /> 
+                <apex:inputField value="{!acct.ShippingCountryCode}" />
+                <apex:inputField value="{!acct.ShippingStreet}" /> 
+                <apex:inputField value="{!acct.ShippingCity}" />
+                <apex:inputField value="{!acct.ShippingStateCode}" /> 
+                <apex:inputField value="{!acct.ShippingPostalCode}" />                                
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+        
+    </apex:form> 
+  
+</apex:page>

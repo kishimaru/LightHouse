@@ -1,0 +1,72 @@
+<apex:page controller="LH.LH_Realtime_Enablement_Controller" sidebar="false" action="{!startupManageTrigger}" tabStyle="All_Settings__tab">  
+	<apex:includeScript value="{!URLFOR($Resource.LH__PT_JSZip, '/jszip.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.LH__PT_JSZip, '/jszip-load.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.LH__PT_JSZip, '/jszip-inflate.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.LH__PT_JSZip, '/jszip-deflate.js')}"/>
+	<apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" />     
+	
+	<style>
+		*{font-family:SalesforceSans-Regular;}
+		
+		.panel-primary > .panel-heading {
+			background-color: #16325c;
+		}
+	
+	</style>
+		
+	<script>
+		// Create JSZip (currently global) instance to receive files 
+		var zipFile = new JSZip();
+		zipFile.generate();
+	</script>
+	
+	<div class="slds-grid--frame" role="main">
+	<div class="container theme-showcase">
+	<c:LH_Nav_Bar /> 
+	
+	<apex:form id="form">
+	 
+	 <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+            	<h3 class="panel-title">Add/Remove Real Time Trigger {!lookupTriggerName}</h3>
+            </div>
+            <apex:pageMessages escape="false" />
+			<apex:pageBlock >
+			<apex:pageBlockButtons rendered="{!renderButton}">  
+			<input type="button" id="deployRemove" onclick="generateZip();" value="{!IF(Deployed, 'Remove', 'Deploy')} {!lookupTriggerName} Trigger" class="btn" />
+			<apex:commandButton value="Back" action="{!backPressed}" />
+			</apex:pageBlockButtons>
+			<h2>Real Time Triggers in Org:</h2><br/>	
+			<apex:repeat value="{!apexTriggersToDisplayMap}" var="trigKey">
+				<a href="/{!apexTriggersToDisplayMap[trigKey]}" target="_blank">{!trigKey}</a><br />
+			</apex:repeat>
+			</apex:pageBlock>
+						
+			<apex:actionPoller action="{!checkAsyncRequest}" interval="5" rerender="form" rendered="{!NOT(ISNULL(AsyncResult))}"/>
+			<apex:actionFunction name="deployZip" action="{!deployZip}" rendered="{!ISNULL(AsyncResult)}" rerender="form">
+				<apex:param name="data" assignTo="{!ZipData}" value=""/>
+			</apex:actionFunction> 
+			<c:LH_Zip name="generateZip" id="czip" oncomplete="deployZip(data);" rendered="{!ISNULL(AsyncResult)}">
+				<c:LH_ZipEntry path="package.xml" data="{!PackageXml}"/>
+				<c:LH_ZipEntry path="destructiveChanges.xml" data="{!DestructiveChangesXml}" rendered="{!Deployed}"/>
+				<c:LH_ZipEntry path="classes/{!LookupTriggerTestName}.cls-meta.xml" data="{!TriggerTestCodeMetadata}" rendered="{!NOT(Deployed)}"/>
+				<c:LH_ZipEntry path="classes/{!LookupTriggerTestName}.cls" data="{!TriggerTestCode}" rendered="{!AND(NOT(Deployed), deployFkObjectName == null)}"/>
+				<c:LH_ZipEntry path="classes/{!LookupTriggerTestName}.cls" data="{!FkTriggerTestCode}" rendered="{!AND(NOT(Deployed), deployFkObjectName != null)}"/>
+				<c:LH_ZipEntry path="triggers/{!LookupTriggerName}.trigger-meta.xml" data="{!TriggerCodeMetadata}" rendered="{!NOT(Deployed)}"/>
+				<c:LH_ZipEntry path="triggers/{!LookupTriggerName}.trigger" data="{!TriggerCode}" rendered="{!AND(NOT(Deployed), deployFkObjectName == null)}"/>
+				<c:LH_ZipEntry path="triggers/{!LookupTriggerName}.trigger" data="{!FkTriggerCode}" rendered="{!AND(NOT(Deployed), deployFkObjectName != null)}"/>
+			</c:LH_Zip>
+		
+		</div>
+	  </div>
+	</div>
+ 	</apex:form>
+ 	
+ 	</div>
+ 	</div>
+</apex:page>

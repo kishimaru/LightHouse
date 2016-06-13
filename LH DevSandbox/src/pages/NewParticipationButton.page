@@ -1,0 +1,22 @@
+<apex:page standardController="Participation__c">
+    <apex:pageBlock title="New Participation">
+        <apex:pageBlockSection >        
+            A Participation record represents a student's involvement in a program (e.g., tech, braille, employment, etc.).
+        </apex:pageBlockSection>  
+        <apex:pageBlockSection >        
+            <h1>To create a new Participation:</h1>
+        </apex:pageBlockSection>        
+        <apex:pageBlockSection >
+            1. Find the student's Profile;
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >
+            2. In their Profile page, go to the Participation section;
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >
+            3. Click the 'New Participation' button and then select the program in which they are participating.
+        </apex:pageBlockSection>    
+        <apex:pageBlockSection >
+            <i>Questions? Contact your system administrator.</i>
+        </apex:pageBlockSection>            
+   </apex:pageBlock>
+</apex:page>

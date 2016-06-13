@@ -1,0 +1,86 @@
+<apex:page controller="LH.LH_Realtime_Enablement_Controller" sidebar="false"  action="{!checkMetadataAPIConnection}">  
+    <apex:stylesheet value="{! URLFOR( $Resource.PT_Resources_v1, '/css/popup.css' ) }" /> 
+    <apex:includeScript value="//code.jquery.com/jquery-2.1.1.js" />
+	<apex:includeScript value="{!URLFOR($Resource.LH__Bootstrap,'/dist/js/bootstrap.min.js')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__Bootstrap, '/dist/css/bootstrap.min.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.LH__LHSLDS, '/assets/styles/salesforce-lightning-design-system-vf.min.css')}" /> 
+	  
+    <style> 
+        [id$=heading] { padding-top:25px; padding-bottom:5px;}
+        [id$=objectList] {margin-left:auto; margin-right:auto; height:425px; overflow-y:scroll;}
+                .breadcrumb {font-size:medium;}
+        .checkmark2 {
+            background-image: url({!URLFOR($Resource.LH__PT_Resources_v1, 'images/checkmark.png')});
+            margin-left: 6px;
+            width: 12px;
+            height: 12px;
+        }
+        
+        *{font-family:SalesforceSans-Regular;}
+        
+        .panel-primary > .panel-heading {
+			background-color: #16325c;
+		}
+		
+    </style>
+    <div class="slds-grid--frame" role="main">
+
+    <c:LH_Nav_Bar /> 
+    
+    <apex:form >
+    
+    <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+            	<h3 class="panel-title">Select Source Object to Enable/Disable Real-time Updating</h3>
+            </div>
+            
+	        <apex:pageBlock title="Select Source Object to Enable/Disable Real-time Updating">
+	         <apex:pageMessages id="error"/>    
+	            <apex:outputPanel id="objectList" layout="block">
+	                <apex:pageBlockTable value="{! masterObjects }" styleclass="table table-responsive table-striped table-bordered settings-table" var="item" id="table">
+	                    <apex:column >
+	                        <apex:facet name="header">
+	                                Action
+	                       </apex:facet>
+                            <apex:commandLink style="color:blue; text-decoration:underline;" value="{!IF(item.realTime == true, 'Disable', 'Enable')}" action="{!doSelectMasterObject}" rerender="error, table">                                
+                                <apex:param name="masterAPI" value="{!item.ObjectName}" assignTo="{!deployObjectName}"/>
+                              	<apex:param name="FkAPI" value="{!item.FkObjectName}" assignTo="{!deployFkObjectName}"/>                               
+                            </apex:commandLink>
+	                    </apex:column>
+	                     <apex:column >
+	                        <apex:facet name="header">
+	                        	<center>Realtime Enabled</center>
+	                            
+	                        </apex:facet>
+	                    
+	                    	<!-- Job Active check image display-->
+	                        <center><apex:image value="{!URLFOR($Resource.LH__PT_Resources_v1, 'images/s.gif')}" 
+	                        styleClass="checkmark2" rendered="{!item.realTime}" id="checkmark2"/></center>                                             
+	                        
+	                    </apex:column>
+	                    <apex:column >
+	                        <apex:facet name="header">
+	                            Label
+	                        </apex:facet> 
+	                                                {! item.Label }
+	                    </apex:column> 
+	                    <apex:column value="{! item.ObjectName }">
+	                        <apex:facet name="header">
+	                           Trigger API Object Name
+	                        </apex:facet>
+	                    </apex:column>
+	
+	                </apex:pageBlockTable>
+	            </apex:outputPanel>            
+	                                       
+	        </apex:pageBlock>
+
+		  </div>
+	   </div>
+	</div>
+    </apex:form>
+    
+    </div>
+</apex:page>

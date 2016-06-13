@@ -1,0 +1,102 @@
+<!-- 
+    Copyright (c) 2010, 2016, David Habib, DJH Consulting, djhconsulting.com
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of
+       its contributors may be used to endorse or promote products derived
+       from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+    POSSIBILITY OF SUCH DAMAGE.
+-->
+ 
+<apex:page controller="GW_Volunteers.VOL_CTRL_VolunteersFind" tabStyle="Find_Volunteers__tab" >
+
+<style>	
+
+	.pbBody .cssFilterLabel {
+    	font-weight: bold;
+	}
+
+</style>	
+
+    <apex:sectionHeader title="{!$Label.gw_volunteers__labelFindVolunteers}" />       
+    <apex:form > 
+        
+        <apex:pageBlock title="{!$Label.gw_volunteers__labelFindVolunteers}" rendered="true"  mode="detail" >
+            <apex:pageMessages id="msgs" />
+            
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelFindVolunteersCriteria}" columns="1" id="pbsFind" collapsible="true" > 
+	            <apex:outputText value="{!$Label.gw_volunteers__labelFindVolunteersHelpCriteria}" style="font-style:italic" />	            
+	            <apex:pageBlockSection columns="{!$ObjectType.Contact.FieldSets.GW_Volunteers__VolunteersFindCriteriaFS.size}" >  	            
+					<apex:repeat value="{!$ObjectType.Contact.FieldSets.GW_Volunteers__VolunteersFindCriteriaFS}" var="f" >
+	            		<apex:pageBlockSectionItem dataStyleClass="cssFilterLabel" >{!f.Label}</apex:pageBlockSectionItem>
+		  			</apex:repeat>        
+					<apex:repeat value="{!$ObjectType.Contact.FieldSets.GW_Volunteers__VolunteersFindCriteriaFS}" var="f" >
+						<apex:pageBlockSectionItem ><apex:inputField value="{!conFilter[f]}" /></apex:pageBlockSectionItem>  
+		  			</apex:repeat>        	            
+	                <apex:commandButton action="{!Find}" value="{!$Label.gw_volunteers__labelButtonFind}" rerender="msgs,pbsVolunteers,pbsAssign" status="statusLoad" immediate="false" />
+	            </apex:pageBlockSection>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelFindVolunteersFindResults}" columns="1" id="pbsVolunteers" collapsible="true" >
+            	<script>if ({!NOT(hasFilterCriteria)}) { twistSection(document.getElementById("{!$Component.pbsVolunteers}").childNodes[0].childNodes[0]); } </script>
+            	<apex:outputText value="{!$Label.gw_volunteers__labelFindVolunteersHelpFindResults}" rendered="{!NOT(hasFilterCriteria)}" style="font-style:italic;" /> 
+				<c:SoqlListView pcPageController="{!this}" ></c:SoqlListView>
+			</apex:pageBlockSection>
+			
+            <apex:pageBlockSection title="{!$Label.gw_volunteers__labelFindVolunteersAssign}" columns="1" id="pbsAssign" collapsible="true" > 
+            	<script>if ({!NOT(hasFilterCriteria)}) { twistSection(document.getElementById("{!$Component.pbsAssign}").childNodes[0].childNodes[0]); } </script>
+	            <apex:outputText value="{!$Label.gw_volunteers__labelFindVolunteersHelpAssign}" style="font-style:italic" />
+	            
+	            <apex:pageBlockSection columns="2" >
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="{!$ObjectType.Campaign.Label}" />
+		                <apex:selectList value="{!campaignId}" size="1" >
+		                    <apex:actionSupport immediate="false" event="onchange" rerender="ddlVolunteerJobs,ddlVolunteerShifts" status="statusLoad" action="{!ChangeCampaign}" />
+		                    <apex:selectOptions value="{!listSOCampaigns}" /> 
+		                </apex:selectList>  
+	        		</apex:pageBlockSectionItem>
+	            	<apex:pageBlockSectionItem />
+	            	<apex:pageBlockSectionItem >
+						<apex:outputLabel value="{!$ObjectType.GW_Volunteers__Volunteer_Job__c.Label}" />
+		                <apex:selectList value="{!volunteerJobId}" size="1" id="ddlVolunteerJobs">
+		                    <apex:actionSupport immediate="false" event="onchange" rerender="ddlVolunteerShifts" status="statusLoad" action="{!ChangeVolunteerJob}" />
+		                    <apex:selectOptions value="{!listSOVolunteerJobs}" /> 
+		                </apex:selectList>
+	        		</apex:pageBlockSectionItem>
+	            	<apex:pageBlockSectionItem >
+						<apex:outputLabel value="{!$ObjectType.GW_Volunteers__Volunteer_Shift__c.Label}" />
+		                <apex:selectList value="{!volunteerShiftId}" size="1" id="ddlVolunteerShifts">
+		                    <apex:selectOptions value="{!listSOVolunteerShifts}" /> 
+		                </apex:selectList>
+	        		</apex:pageBlockSectionItem>
+	        		<apex:inputField value="{!vhAssign.GW_Volunteers__Status__c}" />	              
+	        		<apex:inputField value="{!vhAssign.GW_Volunteers__Hours_Worked__c}" />	              
+	                <apex:commandButton action="{!Assign}" value="{!$Label.gw_volunteers__labelButtonAssign}" rerender="msgs,pbsAssign" status="statusLoad" immediate="false" />
+	            </apex:pageBlockSection>
+	            <apex:pageMessages />
+            </apex:pageBlockSection>
+
+		</apex:pageBlock>
+	</apex:form>
+
+</apex:page>

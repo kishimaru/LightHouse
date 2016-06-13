@@ -1,0 +1,5 @@
+<apex:page showHeader="True" tabstyle="Profile__c">
+    <!-- Checking eclipse updating. For test purposes only.  Latest update.. -->
+    <apex:ListViews type="Profile__c" />
+
+</apex:page>

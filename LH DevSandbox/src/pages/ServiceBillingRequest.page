@@ -1,0 +1,124 @@
+<apex:page standardController="Service_Reporting__c" renderAs="pdf" showHeader="false" sideBar="false">
+
+    <!-- Escape = false is so that embedded hard returns do not render as BR -->
+
+    <h1>Service Billing Request</h1>
+    <h3>Student information</h3>
+    <table>
+        <tr>
+            <td><apex:outputText value="{!Service_Reporting__c.Student_Name__c}" /></td>
+        </tr>
+        <tr>
+            <td><apex:outputText value="{!Service_Reporting__c.Student_Contact_Info__c}" escape="false"/></td>
+        </tr>
+    </table>
+    
+    <h3>Billing Request Information</h3>
+    <table>
+        <tr><th>Billing Date:</th>
+            <td><apex:outputText value=" {!Service_Reporting__c.Billing_Date__c}" /></td>
+        </tr>
+        <tr><th>Department:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Billing_Department_Text__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Service Provider:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.ServiceProviderName__c}" escape="false"/></td>
+        </tr>
+    </table>
+    
+    <h3>Service Authorization Information</h3>
+    <table>
+        <tr><th>Agency/Business:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Agency_Business__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Counselor Name:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.CounselorName__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Address:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Billing_Address__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Phone Number:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.CounselorPhone__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Services Rendered:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.ServicesRendered__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Authorization date range:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Authorization_Date_Range__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Actual service date range:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Actual_Service_Dates__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Authorization document number:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Authorization_Number__c}" escape="false"/></td>
+        </tr>
+        <tr><th>Training/Service Status:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Service_Status__c}" escape="false"/></td>
+        </tr> 
+        <tr><th>Total Service Units This Period:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Number_of_Service_Units__c}" escape="false"/></td>
+        </tr>        
+
+        <tr><th>Billing Rate:</th>
+            <td><apex:outputText value="${0, number, 00.00}">
+                <apex:param value="{!Service_Reporting__c.Billing_Rate__c}"/>
+                </apex:outputText>
+            </td>
+        </tr> 
+        <tr><th>Total Expenses (below):</th>
+            <td><apex:outputText value="${0, number, 00.00}">
+                    <apex:param value="{!Service_Reporting__c.Sum_of_Actual_Expenses__c}"/>
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr><th>Additional Fees/Materials:</th>
+            <td><apex:outputText value="${0, number, 00.00}">
+                    <apex:param value="{!Service_Reporting__c.Additional_Fees_or_Materials__c}"/>
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr><th>TOTAL TO BE BILLED:</th>
+            <td><apex:outputText value="${0, number, 00.00}">
+                    <apex:param value="{!Service_Reporting__c.Total_Billing_Amount__c}"/>
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr><th>Comments:</th>
+            <td><apex:outputText value="{!Service_Reporting__c.Billing_Comments__c}" /></td>
+        </tr>
+                
+    </table>
+    
+    <h3>Expenses</h3>
+    <apex:dataTable value="{!Service_Reporting__c.Service_Expenses__r}" var="SE" cellPadding="4" border="1">
+        <apex:column >
+            <apex:facet name="header">Date</apex:facet>
+            <apex:outputText value="{0,date,MM/dd/yyyy}">
+                <apex:param value="{!SE.Expense_Date__c}" />
+            </apex:outputText>        
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Expense</apex:facet>
+                {!SE.Name}
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Type</apex:facet>
+                {!SE.Type__c}
+        </apex:column>
+        <apex:column >
+            <apex:facet name="header">Amount</apex:facet>
+                ${!SE.Amount__c}
+        </apex:column>    
+        <apex:column >
+            <apex:facet name="header">Dept</apex:facet>
+                {!SE.Billing_Department__c}
+        </apex:column>               
+        <apex:column >
+            <apex:facet name="header">Details</apex:facet>
+                {!SE.Expense_Details__c}
+        </apex:column>           
+    </apex:dataTable>
+    
+
+    
+</apex:page>

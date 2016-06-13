@@ -1,0 +1,56 @@
+<apex:page standardController="Equipment_Loan_Grant__c" extensions="con_ExtensionEquipmentLoanGrant" tabStyle="Equipment_Inventory__c" title="New Equipment">
+
+    <style>
+        .txtError { color: #d74c3b; font-weight: bold; height: 30px; font-size: 100%;}
+    </style>
+    
+    <apex:form id="thisForm">
+
+        <apex:pageBlock id="thisPageBlock" title="Equipment Inventory" mode="edit">
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!saveEquip}" value="Save"/>
+                <apex:commandButton action="{!cancelEquip}" value="Cancel" immediate="true" />
+            </apex:pageBlockButtons>
+            
+            <!-- <apex:messages styleClass="txtError" /> -->
+            <apex:pageMessages escape="false" /> <!-- For dupe blocker error messages -->
+
+            <apex:pageBlockSection id="pBlSection1" columns="1" title="Equipment Information">                                                                          
+                <apex:inputField value="{!equip.Name}" required="true"/>
+                <apex:inputField value="{!equip.Type__c}" required="true"/>
+                <apex:inputField value="{!equip.Date_Purchased_Acquired__c}" />
+                <apex:inputField value="{!equip.How_Acquired__c}" />
+                <apex:inputField value="{!equip.Location__c}" />
+                <apex:inputField value="{!equip.Serial_Number__c}" />
+                <apex:inputField value="{!equip.Brand__c}" />
+                <apex:inputField value="{!equip.Brand_if_Other__c}" />
+                <apex:inputField value="{!equip.Cost__c}" />                                   
+                <apex:inputField value="{!equip.Payment_Source__c}" />
+                <apex:inputField value="{!equip.Vendor__c}"/>
+                <apex:inputField value="{!equip.Method_of_Payment__c}" />
+                <apex:inputField value="{!equip.Vendor_Invoice_Number__c}" />                               
+                <apex:inputField value="{!equip.AP_Check_Number__c}" /> 
+                <apex:inputField value="{!equip.Date_Lost_Broken__c}" />   
+                <apex:inputField value="{!equip.Comments__c}" />                                             
+            </apex:pageBlockSection>
+            
+            
+            <apex:pageBlockSection id="pBlSection2" columns="1" title="DBEP-Related Information"> 
+                <apex:inputField value="{!equip.DBEP_Accessory_Braille__c}" />     
+                <apex:inputField value="{!equip.Communication__c}" /> 
+                <apex:inputField value="{!equip.Relay_Service__c}" />             
+            </apex:pageBlockSection>
+                
+            
+            
+            <apex:pageBlockSection id="pBlSection3" columns="1" title="System Information"> 
+                <apex:inputField value="{!equip.Request_Delete__c}" />     
+                <apex:inputField value="{!equip.Reason_for_Deletion__c}" />            
+            </apex:pageBlockSection>  
+            
+        </apex:pageBlock>
+        
+    </apex:form> 
+  
+</apex:page>
