@@ -15,6 +15,10 @@ public class AttendanceTrackingFormController {
     public List<User> serviceProviders {get; private set;}
     public Map<Id, List<Authorization__c>> authorizationsMap {get; private set;}
     
+    // Added 6/16/2016 KI to fix 1000 max limit on <apex:repeat>
+    // Added limitWrapper object and edited populateProgramParticipants method.
+    public limitWrapper[] thousandBlocks {get; private set;}
+    
     public AttendanceTrackingFormController() {
         
         this.classParticipants = new List<DropDownRecord>();
@@ -194,7 +198,9 @@ public class AttendanceTrackingFormController {
         uos.ProgressLessonNotes = null;
         return uos;
     }
+   
     
+    /** Commented out 6/16/2016 KI to make edits below.
     private void populateProgramParticipants() {
         this.programParticipants = new List<DropDownRecord>();
         List<Participation__c> participants = AttendanceTrackingFormQueryService.queryProgramParticipants(workshopId);
@@ -202,7 +208,56 @@ public class AttendanceTrackingFormController {
             DropDownRecord p = new DropDownRecord(participant.Id, participant.Name);
             this.programParticipants.add(p);
         }
+    }**/
+    
+    
+    public class limitWrapper
+	{
+    	public List<DropDownRecord>() participants {get;set;}
+    	public integer blockNumber {get;set;}
+    	public limitWrapper(List<DropDownRecord>() p, integer i)
+    	{
+        	participants = p;
+        	blockNumber = i;
+    	}
+	}
+    
+private void populateProgramParticipants() {
+    {
+        
+        integer listLimit = 1000;
+        integer counter = 0;
+        integer loopCount = 0;
+
+        this.thousandBlocks = new limitWrapper[]{};
+        this.programParticipants = new List<DropDownRecord>();
+        
+        List<Participation__c> participants = AttendanceTrackingFormQueryService.queryProgramParticipants(workshopId);
+        for (Participation__c participant: participants) {
+            if(counter < listLimit)
+            {
+                
+                DropDownRecord p = new DropDownRecord(participant.Id, participant.Name);
+                this.programParticipants.add(p);
+                counter++;
+            }
+            else
+            {
+                loopCounter++;
+                this.thousandBlocks.add(new limitWrapper(this.programParticipants,loopCount));
+                this.programParticipants = new List<DropDownRecord>();
+                this.programParticipants.add(p);
+                counter = 0;
+            }
+    if(thousandBlocks.size() == 0 )
+    {
+        loopCount++;
+        this.thousandBlocks.add(new limitWrapper(this.ProgramParticipants,loopCount));
     }
+
+    
+    
+    
     
     
     private void populateClassParticipants() {
