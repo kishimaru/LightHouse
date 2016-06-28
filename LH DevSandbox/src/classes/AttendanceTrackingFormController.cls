@@ -211,8 +211,8 @@ public class AttendanceTrackingFormController {
     }**/
     
     
-    public class limitWrapper
-	{
+    public class limitWrapper {
+    // Inner class
     	public List<DropDownRecord>() participants {get;set;}
     	public integer blockNumber {get;set;}
     	public limitWrapper(List<DropDownRecord>() p, integer i)
@@ -234,28 +234,30 @@ private void populateProgramParticipants() {
         
         List<Participation__c> participants = AttendanceTrackingFormQueryService.queryProgramParticipants(workshopId);
         for (Participation__c participant: participants) {
-            if(counter < listLimit)
+            if(counter < listLimit) // While this iteration is less than the 1000th
             {
                 
                 DropDownRecord p = new DropDownRecord(participant.Id, participant.Name);
-                this.programParticipants.add(p);
+                this.programParticipants.add(p);  // add this participant's id and name to the list of drop-down recs
                 counter++;
             }
             else
             {
-                loopCounter++;
+                loopCount++;
                 this.thousandBlocks.add(new limitWrapper(this.programParticipants,loopCount));
                 this.programParticipants = new List<DropDownRecord>();
                 this.programParticipants.add(p);
                 counter = 0;
             }
-    if(thousandBlocks.size() == 0 )
-    {
-        loopCount++;
-        this.thousandBlocks.add(new limitWrapper(this.ProgramParticipants,loopCount));
-    }
+        }
+        
+    	if(thousandBlocks.size() == 0 )
+    	{
+        	loopCount++;
+        	this.thousandBlocks.add(new limitWrapper(this.ProgramParticipants,loopCount));
+    	}
 
-    
+    }
     
     
     

@@ -14,11 +14,20 @@
         </apex:repeat>
         ];
     
+        /*
         pageData.programParticipants = [
         <apex:repeat value="{!programParticipants}" var="participant">
             {id: '{!participant.id}', value: '{!JSENCODE(participant.name)}'},
         </apex:repeat>
-        ];
+        ]; */
+        
+        pageData.programParticipants = [
+		<apex:repeat value="{!thousandBlocks}" var="block">
+        	<apex:repeat value="{!block.participants}" var="p">
+                {id: '{!p.id}',value:'{JSENCODE(p.name)}'},
+            </apex:repeat>
+		</apex:repeat>
+        
     
         pageData.serviceProviders = [
         <apex:repeat value="{!serviceProviders}" var="providerUser">
